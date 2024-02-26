@@ -1,0 +1,43 @@
+---
+import { getSession } from 'auth-astro/server';
+import { SignIn } from 'auth-astro/components';
+import '@/styles/globals.css';
+import Layout from '../layouts/Layout.astro';
+import { CreatePollForm } from '../components/CreatePollForm'; // Import the CreatePollForm component
+import { getAllOptions } from './../lib/helper';
+import { db } from '../utils/db';
+import { polls, pollOptions } from '../models/schema'; // const session = await getSession(Astro.request);
+// if (session) return Astro.redirect('/');
+
+const session = await getSession(Astro.request);
+console.log(session?.user)
+if (!session) return Astro.redirect('/login');
+
+if (Astro.request.method === 'POST') {
+
+  const formData = await Astro.request.formData();
+  const question = formData.get('question');
+  const options = getAllOptions(formData);
+  const poll = await db.insert(polls).values({
+    question: question as string,
+    creatorId: session.user!.id
+  });
+  for (const option of options) {
+    await db.insert(pollOptions).values({
+      option: option as string,
+      votes: 0,
+      pollId: poll.lastInsertRowid as number
+    });
+  }
+}
+---
+
+<Layout title="Login">
+  <main class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md mx-4">
+      <h1 class="text-2xl font-bold text-gray-900 mb-6">Create new Poll</h1>
+      <!-- Your form here -->
+      <CreatePollForm client:load />
+    </div>
+  </main>
+</Layout>
