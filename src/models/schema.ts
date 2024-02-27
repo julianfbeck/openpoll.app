@@ -5,6 +5,9 @@ import {
   text
 } from 'drizzle-orm/sqlite-core';
 import type { AdapterAccount } from '@auth/core/adapters';
+import { nanoid } from 'nanoid';
+
+import { relations, sql } from 'drizzle-orm';
 
 export const accounts = sqliteTable(
   'account',
@@ -36,23 +39,6 @@ export const comments = sqliteTable('comments', {
   content: text('content').notNull()
 });
 
-export const polls = sqliteTable('polls', {
-  id: integer('id').primaryKey(),
-  question: text('question').notNull(),
-  creatorId: text('creatorId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' })
-});
-
-export const pollOptions = sqliteTable('pollOptions', {
-  id: integer('id').primaryKey(),
-  pollId: integer('pollId')
-    .notNull()
-    .references(() => polls.id, { onDelete: 'cascade' }),
-  option: text('option').notNull(),
-  votes: integer('votes').notNull()
-});
-
 export const sessions = sqliteTable('session', {
   sessionToken: text('sessionToken').notNull().primaryKey(),
   userId: text('userId')
@@ -80,3 +66,33 @@ export const verificationTokens = sqliteTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] })
   })
 );
+
+export const polls = sqliteTable('polls', {
+  id: integer('id').primaryKey(),
+  question: text('question').notNull(),
+  timestamp: text('timestamp').default(sql`CURRENT_TIMESTAMP`),
+  shortId: text('shortId')
+    .notNull()
+    .notNull()
+    .$defaultFn(() => nanoid(10)),
+  creatorId: text('creatorId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' })
+});
+
+export const pollOptions = sqliteTable('pollOptions', {
+  id: integer('id').primaryKey(),
+  pollId: integer('pollId')
+    .notNull()
+    .references(() => polls.id, { onDelete: 'cascade' }),
+  option: text('option').notNull(),
+  votes: integer('votes').notNull()
+});
+
+export const pollsRelations = relations(polls, ({ many }) => ({
+  options: many(pollOptions)
+}));
+
+export const pollOptionsRelations = relations(pollOptions, ({ one }) => ({
+  creator: one(polls, { fields: [pollOptions.pollId], references: [polls.id] })
+}));

@@ -12,6 +12,9 @@ import {
   FormLabel,
   FormMessage
 } from './ui/form';
+import { useToast } from './ui/use-toast';
+import { Toast } from './ui/toast';
+import { Toaster } from './ui/toaster';
 
 // Define your form schema using zod
 const pollFormSchema = z.object({
@@ -26,6 +29,8 @@ const pollFormSchema = z.object({
 type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
+  const { toast } = useToast();
+
   const form = useForm<PollFormValues>({
     resolver: zodResolver(pollFormSchema),
     defaultValues: {
@@ -54,6 +59,7 @@ export function CreatePollForm() {
         method: 'POST',
         body: formData
       });
+      console.log('response', response)
 
       // Check if the request was successful
       if (response.ok) {
@@ -90,6 +96,8 @@ export function CreatePollForm() {
 
   return (
     <Form {...form}>
+      <Toaster />
+
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
@@ -147,11 +155,4 @@ export function CreatePollForm() {
       </form>
     </Form>
   );
-}
-
-function toast(arg0: {
-  title: string;
-  description: import('react/jsx-runtime').JSX.Element;
-}) {
-  throw new Error('Function not implemented.');
 }

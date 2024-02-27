@@ -22,6 +22,20 @@
       "when": 1708958205153,
       "tag": "0002_melted_kulan_gath",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1709017365362,
+      "tag": "0003_nice_martin_li",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1709018018248,
+      "tag": "0004_real_grandmaster",
+      "breakpoints": true
     }
   ]
 }
