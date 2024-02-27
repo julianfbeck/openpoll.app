@@ -5,6 +5,7 @@ import { getSession } from 'auth-astro/server';
 import Layout from '../layouts/Layout.astro';
 import Comment from '../components/Comment.astro';
 import CommentForm from '../components/CommentForm.astro';
+import CommentsOverviewWrapper from '../components/CreatePollFormWrapper';
 import { db } from '../utils/db';
 import { comments } from '../models/schema';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ const cms = await db.query.comments.findMany();
       {cms.map((comment) => <Comment comment={comment} />)}
     </ul>
     <CommentForm defaultName={session.user?.name} />
+    <CommentsOverviewWrapper  client:load/>
     <Button>Button</Button>
   </main>
 </Layout>

@@ -15,6 +15,7 @@ import {
 import { useToast } from './ui/use-toast';
 import { Toast } from './ui/toast';
 import { Toaster } from './ui/toaster';
+import { trpcReact } from '@/lib/trpc/client';
 
 // Define your form schema using zod
 const pollFormSchema = z.object({
@@ -29,6 +30,8 @@ const pollFormSchema = z.object({
 type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
+  const upToDateCommentsQuery = trpcReact.getCommentProcedure.useQuery();
+
   const { toast } = useToast();
 
   const form = useForm<PollFormValues>({
@@ -97,6 +100,7 @@ export function CreatePollForm() {
   return (
     <Form {...form}>
       <Toaster />
+      {upToDateCommentsQuery.data?.[0]?.creatorId}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
