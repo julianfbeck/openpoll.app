@@ -37,7 +37,16 @@ const cms = await db.query.comments.findMany();
       {cms.map((comment) => <Comment comment={comment} />)}
     </ul>
     <CommentForm defaultName={session.user?.name} />
-    <CommentsOverviewWrapper  client:load/>
+    <CommentsOverviewWrapper client:idle />
     <Button>Button</Button>
   </main>
 </Layout>
+
+<script>
+  import { trpcAstro } from '@/lib/trpc/client';
+  window.onload = (e) => {
+    console.log('loaded!');
+  // const result = await trpcAstro.greeting.query();
+  };
+  const result = await trpcAstro.greeting.query();
+</script>

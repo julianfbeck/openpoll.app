@@ -30,7 +30,7 @@ const pollFormSchema = z.object({
 type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
-  const greeting = trpcReact.poll.greeting.useQuery()
+  const greeting = trpcReact.greeting.useQuery();
 
   const { toast } = useToast();
 

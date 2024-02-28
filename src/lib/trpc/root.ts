@@ -7,7 +7,6 @@ import { db } from '@/utils/db';
 export const t = initTRPC.context<Context>().create();
 
 export const middleware = t.middleware;
-export const publicProcedure = t.procedure;
 
 const isAuthenticated = middleware(async ({ ctx, next }) => {
   if (!ctx.user) {
@@ -19,20 +18,8 @@ const isAuthenticated = middleware(async ({ ctx, next }) => {
     }
   });
 });
-export const authenticatedUser = publicProcedure.use(isAuthenticated);
+
+export const publicProcedure = t.procedure;
+export const authenticatedProcedure = publicProcedure.use(isAuthenticated);
 
 export const router = t.router;
-
-export const optionsRouter = router({
-  greeting: publicProcedure.query(() => 'hello tRPC v10!')
-});
-
-export const appRouter = router({
-  // Example of a public procedure
-  getCommentProcedure: authenticatedUser.query(async ({ input, ctx }) => {
-    console.log(ctx.user);
-    return await db.query.polls.findMany();
-  }),
-  options: optionsRouter
-});
-export type AppRouter = typeof appRouter;

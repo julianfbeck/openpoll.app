@@ -17,7 +17,6 @@ const CommentsOverviewWrapper = () => {
   );
 
   return (
-    // @ts-ignore Error seed 
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <CreatePollForm></CreatePollForm>
