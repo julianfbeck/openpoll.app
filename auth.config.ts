@@ -4,13 +4,14 @@ import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { db } from './src/utils/db';
 
 import type { AuthConfig } from '@auth/core';
+import { env } from '@/t3-env';
 
 export default {
   adapter: DrizzleAdapter(db),
   providers: [
     GitHub({
-      clientId: import.meta.env.GITHUB_CLIENT_ID,
-      clientSecret: import.meta.env.GITHUB_CLIENT_SECRET
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET
     })
   ],
   callbacks: {
