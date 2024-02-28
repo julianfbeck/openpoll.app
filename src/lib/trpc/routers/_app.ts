@@ -1,11 +1,10 @@
 import { z } from 'zod';
 
 import { publicProcedure, router } from '../root';
-import { userRouter } from './user';
+import { pollRouter } from './poll';
 
 export const appRouter = router({
-  user: userRouter,
-  greeting: publicProcedure.query(() => 'hello tRPC v10!')
+  poll: pollRouter
 });
 
 // You can then access the merged route with

@@ -41,12 +41,3 @@ const cms = await db.query.comments.findMany();
     <Button>Button</Button>
   </main>
 </Layout>
-
-<script>
-  import { trpcAstro } from '@/lib/trpc/client';
-  window.onload = (e) => {
-    console.log('loaded!');
-  // const result = await trpcAstro.greeting.query();
-  };
-  const result = await trpcAstro.greeting.query();
-</script>

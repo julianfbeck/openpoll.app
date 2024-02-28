@@ -8,7 +8,7 @@ import {
   verificationTokens
 } from './schema.ts';
 
-import type { InferSelectModel } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export type Account = InferSelectModel<typeof accounts>;
 
@@ -19,9 +19,12 @@ export type Session = InferSelectModel<typeof sessions>;
 export type User = InferSelectModel<typeof users>;
 
 export type Poll = InferSelectModel<typeof polls> & {
-  options: PollOption[]
+  options: PollOption[];
 };
-
 export type PollOption = InferSelectModel<typeof pollOptions>;
 
 export type VerificationToken = InferSelectModel<typeof verificationTokens>;
+
+export type PollCreate = InferInsertModel<typeof polls>;
+
+export type PollOptionCreate = InferInsertModel<typeof pollOptions>;

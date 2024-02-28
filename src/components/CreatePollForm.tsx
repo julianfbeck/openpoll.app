@@ -30,7 +30,7 @@ const pollFormSchema = z.object({
 type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
-  const greeting = trpcReact.greeting.useQuery();
+  const createPoll = trpcReact.poll.create.useMutation();
 
   const { toast } = useToast();
 
@@ -48,60 +48,62 @@ export function CreatePollForm() {
   });
 
   async function onSubmit(data: PollFormValues) {
-    // Create a FormData instance to build the form-data payload
-    const formData = new FormData();
-    formData.append('question', data.question);
-    data.options.forEach((option, index) => {
-      // Append each option to the form data
-      formData.append(`options[${index}]`, option.label);
+    createPoll.mutate({
+      question: data.question,
+      options: data.options.map((option) => option.label)
     });
+    // // Create a FormData instance to build the form-data payload
+    // const formData = new FormData();
+    // formData.append('question', data.question);
+    // data.options.forEach((option, index) => {
+    //   // Append each option to the form data
+    //   formData.append(`options[${index}]`, option.label);
+    // });
 
-    try {
-      // Use the Fetch API to make a POST request to the server endpoint
-      const response = await fetch('/new', {
-        method: 'POST',
-        body: formData
-      });
-      console.log('response', response);
+    // try {
+    //   // Use the Fetch API to make a POST request to the server endpoint
+    //   const response = await fetch('/new', {
+    //     method: 'POST',
+    //     body: formData
+    //   });
+    //   console.log('response', response);
 
-      // Check if the request was successful
-      if (response.ok) {
-        const jsonResponse = await response.json();
-        // Handle the response data as needed
-        toast({
-          title: 'Poll created successfully',
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-              <code className="text-white">
-                {JSON.stringify(data, null, 2)}
-              </code>
-            </pre>
-          )
-        });
-        console.log('Poll created:', jsonResponse);
-      } else {
-        // Handle HTTP errors
-        throw new Error('Network response was not ok.');
-      }
-    } catch (error) {
-      // Handle errors (network or otherwise)
-      toast({
-        title: 'Error creating poll',
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        )
-      });
-      console.error('There was a problem with the fetch operation:', error);
-    }
+    //   // Check if the request was successful
+    //   if (response.ok) {
+    //     const jsonResponse = await response.json();
+    //     // Handle the response data as needed
+    //     toast({
+    //       title: 'Poll created successfully',
+    //       description: (
+    //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //           <code className="text-white">
+    //             {JSON.stringify(data, null, 2)}
+    //           </code>
+    //         </pre>
+    //       )
+    //     });
+    //     console.log('Poll created:', jsonResponse);
+    //   } else {
+    //     // Handle HTTP errors
+    //     throw new Error('Network response was not ok.');
+    //   }
+    // } catch (error) {
+    //   // Handle errors (network or otherwise)
+    //   toast({
+    //     title: 'Error creating poll',
+    //     description: (
+    //       <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //       </pre>
+    //     )
+    //   });
+    //   console.error('There was a problem with the fetch operation:', error);
+    // }
   }
 
   return (
     <Form {...form}>
       <Toaster />
-      {greeting.data}
-
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
