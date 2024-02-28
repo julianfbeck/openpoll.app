@@ -8,7 +8,8 @@ export const t = initTRPC.context<Context>().create();
 
 export const middleware = t.middleware;
 export const publicProcedure = t.procedure;
-const isAdmin = middleware(async ({ ctx, next }) => {
+
+const isAuthenticated = middleware(async ({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
@@ -18,14 +19,21 @@ const isAdmin = middleware(async ({ ctx, next }) => {
     }
   });
 });
-export const adminProcedure = publicProcedure.use(isAdmin);
+export const authenticatedUser = publicProcedure.use(isAuthenticated);
+
+export const optionsRouter = t.router({
+  greeting: publicProcedure.query(() => 'hello tRPC v10!')
+});
 
 export const appRouter = t.router({
   // Example of a public procedure
-  getCommentProcedure: publicProcedure
-    .query(async ({ input }) => {
-      return await db.query.polls.findMany();
-    })
+  getCommentProcedure: authenticatedUser.query(async ({ input, ctx }) => {
+    console.log(ctx.user);
+    return await db.query.polls.findMany();
+  }),
+  poll: t.router({
+    greeting: publicProcedure.query(() => 'hello tRPC v10!')
+  }),
+  options: optionsRouter
 });
-
 export type AppRouter = typeof appRouter;

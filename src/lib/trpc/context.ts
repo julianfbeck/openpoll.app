@@ -2,11 +2,11 @@ import type { inferAsyncReturnType } from '@trpc/server';
 import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { getSession } from 'auth-astro/server';
 
-export function createContext({
+export async function createContext({
   req,
   resHeaders
 }: FetchCreateContextFnOptions) {
-  const user = getSession(req);
+  const user = await getSession(req);
   return { req, resHeaders, user };
 }
 

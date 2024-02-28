@@ -30,7 +30,7 @@ const pollFormSchema = z.object({
 type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
-  const upToDateCommentsQuery = trpcReact.getCommentProcedure.useQuery();
+  const greeting = trpcReact.poll.greeting.useQuery()
 
   const { toast } = useToast();
 
@@ -62,7 +62,7 @@ export function CreatePollForm() {
         method: 'POST',
         body: formData
       });
-      console.log('response', response)
+      console.log('response', response);
 
       // Check if the request was successful
       if (response.ok) {
@@ -100,7 +100,7 @@ export function CreatePollForm() {
   return (
     <Form {...form}>
       <Toaster />
-      {upToDateCommentsQuery.data?.[0]?.creatorId}
+      {greeting.data}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
