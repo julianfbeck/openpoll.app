@@ -21,18 +21,17 @@ const isAuthenticated = middleware(async ({ ctx, next }) => {
 });
 export const authenticatedUser = publicProcedure.use(isAuthenticated);
 
-export const optionsRouter = t.router({
+export const router = t.router;
+
+export const optionsRouter = router({
   greeting: publicProcedure.query(() => 'hello tRPC v10!')
 });
 
-export const appRouter = t.router({
+export const appRouter = router({
   // Example of a public procedure
   getCommentProcedure: authenticatedUser.query(async ({ input, ctx }) => {
     console.log(ctx.user);
     return await db.query.polls.findMany();
-  }),
-  poll: t.router({
-    greeting: publicProcedure.query(() => 'hello tRPC v10!')
   }),
   options: optionsRouter
 });

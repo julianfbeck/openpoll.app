@@ -1,8 +1,8 @@
-import { publicProcedure, t } from '../root';
-
-const options = t.router({
-  greeting: publicProcedure.query(() => 'hello tRPC v10!')
-});
-
-
-export default options
+// import { z } from 'zod';
+// import { publicProcedure, router } from '../root';
+// export const userRouter = router({
+//   list: publicProcedure.query(() => {
+//     // [..]
+//     return [];
+//   })
+// });
