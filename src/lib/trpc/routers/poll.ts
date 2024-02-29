@@ -14,7 +14,7 @@ export const pollRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await db.transaction(async (tx) => {
+      const shortId = await db.transaction(async (tx) => {
         const poll = await tx.insert(polls).values({
           question: input.question,
           creatorId: ctx.user.user!.id
@@ -31,7 +31,15 @@ export const pollRouter = router({
           where: eq(polls.id, Number(poll.lastInsertRowid)),
           with: { options: true }
         });
-        return fullPoll;
+        return fullPoll?.shortId;
       });
-    })
+      return shortId;
+    }),
+  get: publicProcedure.input(z.string()).query(async ({ input }) => {
+    const poll = await db.query.polls.findFirst({
+      where: eq(polls.shortId, input),
+      with: { options: true }
+    });
+    return poll;
+  })
 });
