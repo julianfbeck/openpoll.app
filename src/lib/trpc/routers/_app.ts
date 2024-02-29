@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { publicProcedure, router } from '../root';
+import { publicProcedure, router, t } from '../root';
 import { pollRouter } from './poll';
 
 export const appRouter = router({
@@ -11,3 +11,4 @@ export const appRouter = router({
 // http://localhost:3000/trpc/<NAMESPACE>.<PROCEDURE>
 
 export type AppRouter = typeof appRouter;
+export const createCaller = t.createCallerFactory(appRouter);

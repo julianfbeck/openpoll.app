@@ -48,11 +48,16 @@ export function CreatePollForm() {
   });
 
   async function onSubmit(data: PollFormValues) {
-    createPoll.mutate({
+    const shortId = await createPoll.mutateAsync({
       question: data.question,
       options: data.options.map((option) => option.label)
     });
-    // // Create a FormData instance to build the form-data payload
+
+    if (shortId) {
+      window.location.href = `/poll/${shortId}`;
+    }
+
+    //    // // Create a FormData instance to build the form-data payload
     // const formData = new FormData();
     // formData.append('question', data.question);
     // data.options.forEach((option, index) => {
