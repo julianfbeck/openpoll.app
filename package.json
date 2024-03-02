@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
+    "dev-replicate": "source .env && litestream replicate -config litestream.private.yml -exec 'astro dev'",
     "preview": "astro preview",
     "astro": "astro",
     "generate": "drizzle-kit generate:sqlite"

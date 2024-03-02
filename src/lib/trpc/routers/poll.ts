@@ -35,6 +35,7 @@ export const pollRouter = router({
       });
       return shortId;
     }),
+
   get: publicProcedure.input(z.string()).query(async ({ input }) => {
     const poll = await db.query.polls.findFirst({
       where: eq(polls.shortId, input),
@@ -42,4 +43,6 @@ export const pollRouter = router({
     });
     return poll;
   })
+
+  vote: publicProcedure.input()
 });
