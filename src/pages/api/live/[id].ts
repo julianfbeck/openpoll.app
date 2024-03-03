@@ -19,8 +19,6 @@ export const GET: APIRoute = async ({ request, params }) => {
           controller.enqueue(encoder.encode(message));
         }
       };
-      //send event every 5 seconds using timeout
-      const interval = setInterval(sendEvent, 5000);
 
       PollEmitter.getInstance().subscribe(id, sendEvent);
 

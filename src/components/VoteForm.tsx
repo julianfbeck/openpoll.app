@@ -39,7 +39,7 @@ export function VoteForm({ pollId: shortId }: { pollId: string }) {
         shortId: shortId,
         optionIds: data.votes
       });
-      window.location.href = `/poll/${shortId}`;
+      // window.location.href = `/poll/${shortId}`;
       // Handle success, e.g., show a success message or redirect
     } catch (error) {
       console.log(error);
