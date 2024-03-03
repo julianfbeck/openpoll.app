@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { publicProcedure, router, t } from '../root';
-import { pollRouter } from './poll';
+import { pollRouter } from '../../../utils/poll';
 
 export const appRouter = router({
   poll: pollRouter

@@ -4,15 +4,16 @@ import '@/styles/globals.css';
 import Layout from '../../../layouts/Layout.astro';
 import { createCaller } from '../../../lib/trpc/routers/_app';
 
-const session = await getSession(Astro.request);
-const caller = createCaller({
-  user: session,
-  req: Astro.request,
-  resHeaders: Astro.response.headers
-});
+// const session = await getSession(Astro.request);
+// const caller = createCaller({
+//   user: session,
+//   req: Astro.request,
+//   resHeaders: Astro.response.headers
+// });
+// const poll = await caller.poll.get('744OB4J1Wq');
+// console.log(poll);
 
-const poll = await caller.poll.get('744OB4J1Wq');
-console.log(poll);
+const { id } = Astro.params;
 ---
 
 <Layout title="Login">
@@ -93,15 +94,14 @@ console.log(poll);
     </div>
   </main>
 </Layout>
-<!-- <div class="flex justify-center items-center my-4">
-	<div class="bg-white shadow-md rounded-full overflow-hidden">
-	  <div class="flex items-center">
-		<div class="text-white bg-blue-500 rounded-l-full py-2 px-4" style="width: 27.1%;">
-		  <span>Dominoes</span>
-		</div>
-		<div class="py-2 px-4">
-		  <span class="text-gray-800">27.1%</span>
-		</div>
-	  </div>
-	</div>
-  </div> -->
+<script is:inline define:vars={{ id }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const eventSource = new EventSource('/api/live/' + id);
+    eventSource.onmessage = (event) => {
+      const messages = document.getElementById('messages');
+      const li = document.createElement('li');
+      li.innerText = JSON.parse(event.data);
+      messages.appendChild(li);
+    };
+  });
+</script>
