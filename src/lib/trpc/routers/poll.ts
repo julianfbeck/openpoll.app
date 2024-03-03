@@ -4,7 +4,6 @@ import { pollOptions, polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
-import { i } from 'node_modules/@tanstack/query-core/build/modern/queryClient-Ho-z40Sw';
 
 export const pollRouter = router({
   create: authenticatedProcedure
@@ -62,9 +61,10 @@ export const pollRouter = router({
         }
 
         for (const optionId of input.optionIds) {
-          tx.update(pollOptions)
+          const response = await tx
+            .update(pollOptions)
             .set({
-              votes: sql`votes + 1`
+              votes: sql`${pollOptions.votes} + 1`
             })
             .where(eq(pollOptions.id, Number(optionId)));
         }
