@@ -3,7 +3,8 @@ import { authenticatedProcedure, publicProcedure, router } from '../root';
 import { pollOptions, polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
+import { i } from 'node_modules/@tanstack/query-core/build/modern/queryClient-Ho-z40Sw';
 
 export const pollRouter = router({
   create: authenticatedProcedure
@@ -42,7 +43,33 @@ export const pollRouter = router({
       with: { options: true }
     });
     return poll;
-  })
+  }),
 
-  vote: publicProcedure.input()
+  vote: publicProcedure
+    .input(
+      z.object({
+        shortId: z.string(),
+        optionIds: z.array(z.string().min(1).max(200))
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db.transaction(async (tx) => {
+        const poll = await tx.query.polls.findFirst({
+          where: eq(polls.shortId, input.shortId)
+        });
+        if (!poll) {
+          throw new Error('Poll not found');
+        }
+
+        for (const optionId of input.optionIds) {
+          tx.update(pollOptions)
+            .set({
+              votes: sql`votes + 1`
+            })
+            .where(eq(pollOptions.id, Number(optionId)));
+        }
+
+        // trigger event emitter
+      });
+    })
 });
