@@ -17,7 +17,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 const FormSchema = z.object({
-  votes: z.array(z.string()).refine((value) => value.some((item) => item), {
+  votes: z.array(z.number()).refine((value) => value.some((item) => item), {
     message: 'You have to select at least one item.'
   })
 });
@@ -34,23 +34,18 @@ export function VoteForm({ pollId: shortId }: { pollId: string }) {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    // const selectedOptions = Object.entries(data.votes)
-    //   .filter(([_, value]) => value)
-    //   .map(([key, _]) => key);
-
-    // try {
-    //   await vote.mutateAsync({
-    //     shortId: shortId,
-    //     optionIds: selectedOptions
-    //   });
-    //   // Handle success, e.g., show a success message or redirect
-    // } catch (error) {
-    //   console.log(error);
-    //   // Handle error, e.g., show an error message
-    // }
+    try {
+      await vote.mutateAsync({
+        shortId: shortId,
+        optionIds: data.votes
+      });
+      window.location.href = `/poll/${shortId}`;
+      // Handle success, e.g., show a success message or redirect
+    } catch (error) {
+      console.log(error);
+      // Handle error, e.g., show an error message
+    }
   }
-
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -80,13 +75,13 @@ export function VoteForm({ pollId: shortId }: { pollId: string }) {
                       >
                         <FormControl>
                           <Checkbox
-                            checked={field.value?.includes(String(item.id))}
+                            checked={field.value?.includes(item.id)}
                             onCheckedChange={(checked) => {
                               return checked
                                 ? field.onChange([...field.value, item.id])
                                 : field.onChange(
                                     field.value?.filter(
-                                      (value) => value !== String(item.id)
+                                      (value) => value !== item.id
                                     )
                                   );
                             }}
