@@ -1,0 +1,16 @@
+---
+import '@/styles/globals.css';
+import Layout from '../../../layouts/Layout.astro';
+
+import VoteFormWrapper from '../../../components/VoteFormWrapper';
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title="Vote">
+  <VoteFormWrapper client:load pollId={id} />
+</Layout>

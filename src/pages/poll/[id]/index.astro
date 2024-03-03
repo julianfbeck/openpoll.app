@@ -1,8 +1,8 @@
 ---
 import { getSession } from 'auth-astro/server';
 import '@/styles/globals.css';
-import Layout from '../../layouts/Layout.astro';
-import { createCaller } from '../../lib/trpc/routers/_app';
+import Layout from '../../../layouts/Layout.astro';
+import { createCaller } from '../../../lib/trpc/routers/_app';
 
 const session = await getSession(Astro.request);
 const caller = createCaller({
