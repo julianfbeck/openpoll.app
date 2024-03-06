@@ -3,14 +3,26 @@ import '@/styles/globals.css';
 import Layout from '../../../layouts/Layout.astro';
 
 import VoteFormWrapper from '../../../components/VoteFormWrapper';
+import { getSession } from 'auth-astro/server';
+import { createCaller } from '@/lib/trpc/routers/_app';
+import type { Poll } from '@/models/types';
 
 const { id } = Astro.params;
 
 if (!id) {
   return Astro.redirect('/');
 }
+const session = await getSession(Astro.request);
+const caller = createCaller({
+  user: session,
+  req: Astro.request,
+  resHeaders: Astro.response.headers
+});
+const poll = (await caller.poll.get(id)) as Poll;
 ---
 
 <Layout title="Vote">
-  <VoteFormWrapper client:load pollId={id} />
+  <main class="flex justify-center items-center min-h-screen bg-gray-100">
+    <VoteFormWrapper client:load poll={poll} />
+  </main>
 </Layout>

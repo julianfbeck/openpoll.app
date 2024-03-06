@@ -3,9 +3,10 @@ import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { CreatePollForm } from './CreatePollForm';
 import { trpcReact } from '@/lib/trpc/client';
+import type { Poll } from '@/models/types';
 import { VoteForm } from './VoteForm';
 
-const VoteFormWrapper = ({ pollId: shortId }: { pollId: string }) => {
+const VoteFormWrapper = ({ poll }: { poll: Poll }) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpcReact.createClient({
@@ -20,7 +21,7 @@ const VoteFormWrapper = ({ pollId: shortId }: { pollId: string }) => {
   return (
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <VoteForm pollId={shortId}></VoteForm>
+        <VoteForm poll={poll}></VoteForm>
       </QueryClientProvider>
     </trpcReact.Provider>
   );

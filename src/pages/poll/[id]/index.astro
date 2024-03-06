@@ -22,8 +22,6 @@ const poll = (await caller.poll.get(id)) as Poll;
 
 <Layout title="Login">
   <main class="flex justify-center items-center min-h-screen bg-gray-100">
-    <PollFormWrapper client:idle poll={poll} />
- 
+    <PollFormWrapper client:load poll={poll} />
   </main>
 </Layout>
-
