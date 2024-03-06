@@ -35,7 +35,7 @@ export function PollForm({ poll: poll }: { poll: Poll }) {
 
   function HasVotedButton({ hasVotedOnPoll }: { hasVotedOnPoll: boolean }) {
     if (hasVotedOnPoll) {
-      return <Button>You have voted</Button>;
+      return <Button disabled>You have voted</Button>;
     } else {
       return (
         <Button>

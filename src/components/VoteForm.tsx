@@ -15,6 +15,7 @@ import { trpcReact } from '@/lib/trpc/client';
 import type { PollOption } from '@/models/types';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useVotedPolls } from './useVotedPolls';
 
 const FormSchema = z.object({
   votes: z.array(z.number()).refine((value) => value.some((item) => item), {
@@ -23,7 +24,7 @@ const FormSchema = z.object({
 });
 
 export function VoteForm({ pollId: shortId }: { pollId: string }) {
-  
+  const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(shortId);
   const { data: poll, isLoading } = trpcReact.poll.get.useQuery(shortId);
   const vote = trpcReact.poll.vote.useMutation();
 
@@ -40,7 +41,7 @@ export function VoteForm({ pollId: shortId }: { pollId: string }) {
         shortId: shortId,
         optionIds: data.votes
       });
-
+      poll && markPollAsVoted();
       window.location.href = `/poll/${shortId}`;
       // Handle success, e.g., show a success message or redirect
     } catch (error) {
