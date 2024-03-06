@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import Layout from '../../../layouts/Layout.astro';
 import { createCaller } from '../../../lib/trpc/routers/_app';
 import type { Poll } from '../../../models/types';
+import PollFormWrapper from '@/components/PollFormWrapper';
 
 const { id } = Astro.params;
 
@@ -21,35 +22,8 @@ const poll = (await caller.poll.get(id)) as Poll;
 
 <Layout title="Login">
   <main class="flex justify-center items-center min-h-screen bg-gray-100">
-    <
-    <div class="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md mx-4">
-      <h1 class="text-2xl font-bold text-gray-900 mb-6">Create new Poll</h1>
-      <!-- Form and poll options will go here -->
-
-      <div class="relative mb-5 rounded-md bg-white h-10 shadow-2xl">
-        <div class="h-10 rounded-md bg-slate-300" style="width: 50%"></div>
-        <div
-          class="absolute inset-0 flex justify-between items-center h-10 mx-4"
-        >
-          <span class="text-black"
-            >Lorem ipsum dolor, sit amet consectetur adipisicing elit. Natus
-            alias odio ullam, giat rem recusandae?</span
-          >
-          <span class="text-gray-800 font-semibold">11.37%</span>
-        </div>
-      </div>
-    </div>
+    <PollFormWrapper client:idle poll={poll} />
+ 
   </main>
 </Layout>
 
-<!-- <script is:inline define:vars={{ id }}>
-  document.addEventListener('DOMContentLoaded', () => {
-    const eventSource = new EventSource('/api/live/' + id);
-    eventSource.onmessage = (event) => {
-      const messages = document.getElementById('messages');
-      const li = document.createElement('li');
-      li.innerText = JSON.parse(event.data);
-      messages.appendChild(li);
-    };
-  });
-</script> -->
