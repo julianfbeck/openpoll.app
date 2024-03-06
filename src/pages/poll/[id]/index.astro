@@ -21,59 +21,28 @@ const poll = (await caller.poll.get(id)) as Poll;
 
 <Layout title="Login">
   <main class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-5xl p-8 bg-white rounded-lg shadow-md mx-4">
+    <
+    <div class="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md mx-4">
       <h1 class="text-2xl font-bold text-gray-900 mb-6">Create new Poll</h1>
       <!-- Form and poll options will go here -->
-      <div class="space-y-4 max-w-md mx-auto">
-        <!-- Pizza Hut Card -->
-        <div class="relative bg-white shadow-md rounded-md overflow-hidden">
-          <div class="bg-blue-500" style="width: 46.68%;"></div>
-          <div class="flex justify-between items-center px-4 py-2">
-            <span class="text-white">Pizza Hut</span>
-            <span class="text-gray-800">46.68%</span>
-          </div>
-        </div>
 
-        <!-- Dominoes Card -->
-        <div class="relative bg-white shadow-md rounded-md overflow-hidden">
-          <div class="bg-blue-500" style="width: 27.1%;"></div>
-          <div class="flex justify-between items-center px-4 py-2">
-            <span class="text-white">Dominoes</span>
-            <span class="text-gray-800">27.1%</span>
-          </div>
-        </div>
-
-        <!-- Papa John's Card -->
-        <div class="relative bg-white shadow-md rounded-md overflow-hidden">
-          <div class="bg-blue-500" style="width: 14.82%;"></div>
-          <div class="flex justify-between items-center px-4 py-2">
-            <span class="text-white">Papa John's</span>
-            <span class="text-gray-800">14.82%</span>
-          </div>
-        </div>
-
-        <!-- Little Caesars Card -->
-        <div class="relative bg-white shadow-md rounded-md overflow-hidden">
-          <div class="bg-blue-500 wi" style="width: 11.37%;"></div>
-          <div class="flex justify-between items-center px-4 py-2">
-            <span class="text-black">Little Caesars</span>
-            <span class="text-gray-800">11.37%</span>
-          </div>
-        </div>
-        <div class="relative mb-5 rounded-full bg-gray-200 h-10">
-          <div class="h-10 rounded-full bg-red-500" style="width: 50%"></div>
-          <div
-            class="absolute inset-0 flex justify-between items-center h-10 px-1"
+      <div class="relative mb-5 rounded-md bg-white h-10 shadow-2xl">
+        <div class="h-10 rounded-md bg-slate-300" style="width: 50%"></div>
+        <div
+          class="absolute inset-0 flex justify-between items-center h-10 mx-4"
+        >
+          <span class="text-black"
+            >Lorem ipsum dolor, sit amet consectetur adipisicing elit. Natus
+            alias odio ullam, giat rem recusandae?</span
           >
-            <span class="text-black">Little Caesars</span>
-            <span class="text-gray-800">11.37%</span>
-          </div>
+          <span class="text-gray-800 font-semibold">11.37%</span>
         </div>
       </div>
     </div>
   </main>
 </Layout>
-<script is:inline define:vars={{ id }}>
+
+<!-- <script is:inline define:vars={{ id }}>
   document.addEventListener('DOMContentLoaded', () => {
     const eventSource = new EventSource('/api/live/' + id);
     eventSource.onmessage = (event) => {
@@ -83,4 +52,4 @@ const poll = (await caller.poll.get(id)) as Poll;
       messages.appendChild(li);
     };
   });
-</script>
+</script> -->
