@@ -1,0 +1,1 @@
+CREATE INDEX `shortid_idx` ON `polls` (`shortId`);
