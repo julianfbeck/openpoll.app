@@ -20,7 +20,7 @@ const caller = createCaller({
 const poll = (await caller.poll.get(id)) as Poll;
 ---
 
-<Layout title="Login">
+<Layout title=`Poll: ${poll.question}`>
   <main class="flex justify-center items-center min-h-screen bg-gray-100">
     <PollFormWrapper client:load poll={poll} />
   </main>

@@ -12,7 +12,7 @@ const PollFormWrapper = ({ poll: poll }: { poll: Poll }) => {
     trpcReact.createClient({
       links: [
         httpBatchLink({
-          url: 'http://localhost:4321/api/trpc'
+          url: '/api/trpc'
         })
       ]
     })
@@ -21,7 +21,7 @@ const PollFormWrapper = ({ poll: poll }: { poll: Poll }) => {
   return (
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <PollForm poll={poll}/>
+        <PollForm poll={poll} />
       </QueryClientProvider>
     </trpcReact.Provider>
   );

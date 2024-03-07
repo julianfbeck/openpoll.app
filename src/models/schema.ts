@@ -1,13 +1,16 @@
 import {
+  index,
   integer,
   primaryKey,
   sqliteTable,
-  text
+  text,
+  view
 } from 'drizzle-orm/sqlite-core';
 import type { AdapterAccount } from '@auth/core/adapters';
 import { nanoid } from 'nanoid';
 
 import { relations, sql } from 'drizzle-orm';
+import { table } from 'node_modules/astro/dist/core/logger/core';
 
 export const accounts = sqliteTable(
   'account',
@@ -67,18 +70,27 @@ export const verificationTokens = sqliteTable(
   })
 );
 
-export const polls = sqliteTable('polls', {
-  id: integer('id').primaryKey(),
-  question: text('question').notNull(),
-  timestamp: text('timestamp').default(sql`CURRENT_TIMESTAMP`),
-  shortId: text('shortId')
-    .notNull()
-    .notNull()
-    .$defaultFn(() => nanoid(10)),
-  creatorId: text('creatorId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' })
-});
+export const polls = sqliteTable(
+  'polls',
+  {
+    id: integer('id').primaryKey(),
+    question: text('question').notNull(),
+    timestamp: text('timestamp').default(sql`CURRENT_TIMESTAMP`),
+    views: integer('views').notNull().default(0),
+    shortId: text('shortId')
+      .notNull()
+      .notNull()
+      .$defaultFn(() => nanoid(10)),
+    creatorId: text('creatorId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' })
+  },
+  (table) => {
+    return {
+      shortIdx: index('shortid_idx').on(table.shortId)
+    };
+  }
+);
 
 export const pollOptions = sqliteTable('pollOptions', {
   id: integer('id').primaryKey(),

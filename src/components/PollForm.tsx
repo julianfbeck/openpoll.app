@@ -73,10 +73,10 @@ function PollOptions({ options }: { options: PollOption[] }) {
         return (
           <div
             key={option.id}
-            className="relative mb-5 rounded-md bg-white h-10 shadow-2xl"
+            className="relative mb-5 rounded-md bg-white h-10 shadow-2xl border"
           >
             <div
-              className="h-10 rounded-md bg-slate-300"
+              className="h-10 rounded-md bg-slate-300 border"
               style={{ width: `${widthPercentage}%` }}
             ></div>
             <div className="absolute inset-0 flex justify-between items-center h-10 mx-4">

@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { CreatePollForm } from './CreatePollForm';
 import { trpcReact } from '@/lib/trpc/client';
 
-const CommentsOverviewWrapper = () => {
+const CreatePollFormWrapper = () => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpcReact.createClient({
       links: [
         httpBatchLink({
-          url: 'http://localhost:4321/api/trpc'
+          url: '/api/trpc'
         })
       ]
     })
@@ -24,4 +24,4 @@ const CommentsOverviewWrapper = () => {
     </trpcReact.Provider>
   );
 };
-export default CommentsOverviewWrapper;
+export default CreatePollFormWrapper;

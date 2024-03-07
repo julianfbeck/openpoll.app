@@ -12,7 +12,7 @@ const VoteFormWrapper = ({ poll }: { poll: Poll }) => {
     trpcReact.createClient({
       links: [
         httpBatchLink({
-          url: 'http://localhost:4321/api/trpc'
+          url: '/api/trpc'
         })
       ]
     })

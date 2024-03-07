@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { Trash2 } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -12,9 +13,6 @@ import {
   FormLabel,
   FormMessage
 } from './ui/form';
-import { useToast } from './ui/use-toast';
-import { Toast } from './ui/toast';
-import { Toaster } from './ui/toaster';
 import { trpcReact } from '@/lib/trpc/client';
 
 // Define your form schema using zod
@@ -31,8 +29,6 @@ type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
   const createPoll = trpcReact.poll.create.useMutation();
-
-  const { toast } = useToast();
 
   const form = useForm<PollFormValues>({
     resolver: zodResolver(pollFormSchema),
@@ -56,114 +52,72 @@ export function CreatePollForm() {
     if (shortId) {
       window.location.href = `/poll/${shortId}`;
     }
-
-    //    // // Create a FormData instance to build the form-data payload
-    // const formData = new FormData();
-    // formData.append('question', data.question);
-    // data.options.forEach((option, index) => {
-    //   // Append each option to the form data
-    //   formData.append(`options[${index}]`, option.label);
-    // });
-
-    // try {
-    //   // Use the Fetch API to make a POST request to the server endpoint
-    //   const response = await fetch('/new', {
-    //     method: 'POST',
-    //     body: formData
-    //   });
-    //   console.log('response', response);
-
-    //   // Check if the request was successful
-    //   if (response.ok) {
-    //     const jsonResponse = await response.json();
-    //     // Handle the response data as needed
-    //     toast({
-    //       title: 'Poll created successfully',
-    //       description: (
-    //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //           <code className="text-white">
-    //             {JSON.stringify(data, null, 2)}
-    //           </code>
-    //         </pre>
-    //       )
-    //     });
-    //     console.log('Poll created:', jsonResponse);
-    //   } else {
-    //     // Handle HTTP errors
-    //     throw new Error('Network response was not ok.');
-    //   }
-    // } catch (error) {
-    //   // Handle errors (network or otherwise)
-    //   toast({
-    //     title: 'Error creating poll',
-    //     description: (
-    //       <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //       </pre>
-    //     )
-    //   });
-    //   console.error('There was a problem with the fetch operation:', error);
-    // }
   }
 
   return (
-    <Form {...form}>
-      <Toaster />
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="question"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Question</FormLabel>
-              <FormControl>
-                <Input placeholder="Your Poll" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/* Dynamic poll options fields */}
-        {fields.map((field, index) => (
+    <div className="w-full max-w-4xl bg-white rounded-lg border p-8 shadow-xl">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
           <FormField
             control={form.control}
-            key={field.id}
-            name={`options.${index}.label`}
+            name="question"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Option {index + 1}</FormLabel>
+                <FormLabel>Poll Question</FormLabel>
                 <FormControl>
-                  <Input placeholder={`Option ${index + 1}`} {...field} />
+                  <Input placeholder="Your Poll" {...field} />
                 </FormControl>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => remove(index)}
-                >
-                  Remove Option
-                </Button>
+                <FormDescription>
+                  Header for your poll. Example: "What's your favorite color?"
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-        ))}
+          {/* Dynamic poll options fields */}
+          {fields.map((field, index) => (
+            <FormField
+              control={form.control}
+              key={field.id}
+              name={`options.${index}.label`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Option {index + 1}</FormLabel>
+                  <div className="flex">
+                    <FormControl>
+                      <Input placeholder={`Option ${index + 1}`} {...field} />
+                    </FormControl>
+                    <Button
+                      className="ml-3"
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="ß" />
+                    </Button>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => append({ label: '' })}
-        >
-          + Add Option
-        </Button>
+          <div className="flex item-center justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append({ label: '' })}
+            >
+              + Add Option
+            </Button>
 
-        {/* Submit button */}
-        <Button type="submit">Create Poll</Button>
-      </form>
-    </Form>
+            {/* Submit button */}
+            <Button type="submit">Create Poll</Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 }
