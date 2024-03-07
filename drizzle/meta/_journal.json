@@ -36,6 +36,20 @@
       "when": 1709018018248,
       "tag": "0004_real_grandmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1709804478451,
+      "tag": "0005_adorable_marvel_zombies",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1709806846838,
+      "tag": "0006_nervous_nighthawk",
+      "breakpoints": true
     }
   ]
 }
