@@ -11,6 +11,7 @@ else
 	echo "No database found, restoring from replica if exists"
 	litestream restore -if-replica-exists $DB_PATH
 fi
+printenv
 
 # Run litestream with your app as the subprocess.
 exec litestream replicate -exec "node ./dist/server/entry.mjs"

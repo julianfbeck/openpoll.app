@@ -1,6 +1,11 @@
 import { createEnv } from '@t3-oss/env-core';
 import { z } from 'zod';
 
+// in case if the script was imported from node like in case of migrations
+const runtimeEnv = process.env;
+
+const clientPrefix = 'PUBLIC_' as const;
+
 export const env = createEnv({
   server: {
     AUTH_SECRET: z.string(),
@@ -12,7 +17,7 @@ export const env = createEnv({
   },
   // Astro bundles all environment variables so
   // we don't need to manually destructure them
-  runtimeEnv: import.meta.env,
+  runtimeEnv,
   // process is not available in Astro, so we must set this explicitly
   skipValidation: import.meta.env.SKIP_ENV_VALIDATION === 'development',
   clientPrefix: 'PUBLIC_'

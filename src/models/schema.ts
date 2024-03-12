@@ -10,7 +10,6 @@ import type { AdapterAccount } from '@auth/core/adapters';
 import { nanoid } from 'nanoid';
 
 import { relations, sql } from 'drizzle-orm';
-import { table } from 'node_modules/astro/dist/core/logger/core';
 
 export const accounts = sqliteTable(
   'account',

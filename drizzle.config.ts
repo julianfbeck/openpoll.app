@@ -10,5 +10,6 @@ export default {
       process.env.NODE_ENV === 'production'
         ? '/data/db.sqlite3'
         : './db.sqlite3'
-  }
+  },
+  verbose: true
 } satisfies Config;

@@ -14,6 +14,9 @@ export default {
       clientSecret: env.GITHUB_CLIENT_SECRET
     })
   ],
+  trustHost: true,
+  secret: env.AUTH_SECRET,
+
   callbacks: {
     session({ session, user }) {
       if (session.user) {
