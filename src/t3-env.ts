@@ -2,7 +2,8 @@ import { createEnv } from '@t3-oss/env-core';
 import { z } from 'zod';
 
 // in case if the script was imported from node like in case of migrations
-const runtimeEnv = process.env;
+const runtimeEnv =
+  process.env.NODE_ENV === 'production' ? process.env : import.meta.env;
 
 const clientPrefix = 'PUBLIC_' as const;
 

@@ -7,14 +7,11 @@ import { CreatePollForm } from '../components/CreatePollForm'; // Import the Cre
 import { getAllOptions } from './../lib/helper';
 import { db } from '../utils/db';
 import { polls, pollOptions } from '../models/schema'; // const session = await getSession(Astro.request);
-// if (session) return Astro.redirect('/');
 
 const session = await getSession(Astro.request);
-console.log(session?.user)
 if (!session) return Astro.redirect('/login');
 
 if (Astro.request.method === 'POST') {
-
   const formData = await Astro.request.formData();
   const question = formData.get('question');
   const options = getAllOptions(formData);

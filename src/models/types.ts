@@ -21,6 +21,7 @@ export type User = InferSelectModel<typeof users>;
 export type Poll = InferSelectModel<typeof polls> & {
   options: PollOption[];
 };
+
 export type PollOption = InferSelectModel<typeof pollOptions>;
 
 export type VerificationToken = InferSelectModel<typeof verificationTokens>;

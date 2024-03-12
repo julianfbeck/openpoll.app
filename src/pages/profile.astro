@@ -1,0 +1,25 @@
+---
+import '@/styles/globals.css';
+import { getSession } from 'auth-astro/server';
+
+import Layout from '../layouts/Layout.astro';
+import { db } from '../utils/db';
+import { eq, sql } from 'drizzle-orm';
+import { polls } from '@/models/schema';
+import { UserProfile } from '../components/Profile';
+const session = await getSession(Astro.request);
+if (!session?.user) return Astro.redirect('/login');
+
+const userPolls = await db.query.polls.findMany({
+  where: eq(polls.creatorId, session.user!.id),
+  with: {
+    options: true
+  }
+});
+---
+
+<Layout title="Profile">
+  <main class="flex justify-center items-center min-h-screen bg-gray-100">
+    <UserProfile polls={userPolls} />
+  </main>
+</Layout>
