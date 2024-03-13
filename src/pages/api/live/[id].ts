@@ -1,5 +1,6 @@
-import PollEmitter from '@/lib/PollEmitter';
 import type { APIRoute } from 'astro';
+import { Redis } from 'ioredis';
+const redisSubscriber = new Redis('redis://localhost:6379');
 
 export const GET: APIRoute = async ({ request, params }) => {
   const id = params.id as string;
@@ -8,37 +9,46 @@ export const GET: APIRoute = async ({ request, params }) => {
     return new Response('Not found', { status: 404 });
   }
 
-  let isClosed = false;
-  const body = new ReadableStream({
+  const encoder = new TextEncoder();
+  let isControllerClosed = false; // Flag to track if the controller is closed
+
+  const customReadable = new ReadableStream({
     start(controller) {
-      const encoder = new TextEncoder();
+      redisSubscriber.subscribe(`update:${id}`, (err) => {
+        if (err) console.log(err);
+      });
 
-      const sendEvent = () => {
-        if (!isClosed) {
-          const message = `data: ${JSON.stringify({ update: true })}\n\n`;
-          controller.enqueue(encoder.encode(message));
+      // Listen for new posts from Redis
+      redisSubscriber.on('message', (channel, message) => {
+        console.log(channel, message);
+        if (channel === `update:${id}` && !isControllerClosed) {
+          controller.enqueue(encoder.encode(`data: ${message}\n\n`));
         }
-      };
+        if (isControllerClosed) {
+          redisSubscriber.unsubscribe(`update:${id}`);
+        }
+      });
 
-      PollEmitter.getInstance().subscribe(id, sendEvent);
-
-      request.signal.addEventListener('abort', () => {
-        isClosed = true;
-        PollEmitter.getInstance().unsubscribe(id, sendEvent);
+      redisSubscriber.on('end', () => {
+        isControllerClosed = true; // Update flag when the controller is closed
         controller.close();
       });
     },
     cancel() {
-      isClosed = true;
-      PollEmitter.getInstance().unsubscribe(id, () => {});
+      //this is important to close the connection, otherwise it can crash the server
+      console.log('Controller is closed');
+      isControllerClosed = true;
+      redisSubscriber.unsubscribe(`update:${id}`);
+      redisSubscriber.quit();
     }
   });
 
-  return new Response(body, {
+  return new Response(customReadable, {
     headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive'
+      Connection: 'keep-alive',
+      'Content-Encoding': 'none',
+      'Cache-Control': 'no-cache, no-transform',
+      'Content-Type': 'text/event-stream; charset=utf-8'
     }
   });
 };

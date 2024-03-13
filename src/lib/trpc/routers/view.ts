@@ -4,7 +4,6 @@ import { pollOptions, polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
-import PollEmitter from '@/lib/PollEmitter';
 
 export const viewRouter = router({
   view: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {

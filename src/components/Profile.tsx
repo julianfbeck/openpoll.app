@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import type { OnlyPolls, Poll } from '@/models/types';
+import type { Poll } from '@/models/types';
 
 const invoices = [
   {

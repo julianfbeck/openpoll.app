@@ -4,7 +4,7 @@ import { pollOptions, polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
-import PollEmitter from '@/lib/PollEmitter';
+import Redis from 'ioredis';
 
 export const pollRouter = router({
   create: authenticatedProcedure
@@ -71,7 +71,11 @@ export const pollRouter = router({
         }
 
         // trigger event emitter
-        PollEmitter.getInstance().notifyRoom(poll.shortId);
+        const redis = new Redis();
+        await redis.publish(
+          `update:${input.shortId}`,
+          JSON.stringify({ update: true })
+        );
       });
     })
 });

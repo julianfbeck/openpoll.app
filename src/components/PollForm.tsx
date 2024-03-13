@@ -13,7 +13,7 @@ export function PollForm({ poll: poll }: { poll: Poll }) {
   });
 
   useEffect(() => {
-    const source = new EventSource(`/api/live/${poll.id}`);
+    const source = new EventSource(`/api/live/${poll.shortId}`);
 
     source.addEventListener('open', () => {
       console.log('SSE opened!');
