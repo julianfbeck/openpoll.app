@@ -9,9 +9,9 @@ swap_size_mb = 1024
 
 [build]
 
-[[mounts]]
-  source = 'myapp_data'
-  destination = '/data'
+# [[mounts]]
+#   source = 'myapp_data'
+#   destination = '/data'
 
 [http_service]
   internal_port = 4321
