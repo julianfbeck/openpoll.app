@@ -1,46 +1,19 @@
 ---
 import Layout from './Layout.astro';
+import Sidebar from './Sidebar.astro';
 import '@/styles/globals.css';
 
 interface Props {
   title: string;
+  currentPage: string;
 }
 
-const { title } = Astro.props;
+const { title, currentPage } = Astro.props;
 ---
 
 <Layout title="title">
-  
   <!-- Card in the upper third of the page -->
- 
+  <Sidebar currentPage="about" />
 
-  <footer class="bg-gray-900 text-white text-center p-4">
-    <div class="container mx-auto">
-      <div class="flex justify-center space-x-4 mb-2">
-        <a href="/about" class="text-white hover:text-gray-300 text-sm">About</a
-        >
-        <a
-          href="https://github.com/yourusername"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-white hover:text-gray-300 text-sm">GitHub</a
-        >
-        <a
-          href="https://twitter.com/yourusername"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-white hover:text-gray-300 text-sm">Twitter</a
-        >
-        <a
-          href="https://www.linkedin.com/in/yourusername"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-white hover:text-gray-300 text-sm">LinkedIn</a
-        >
-      </div>
-      <p class="text-xs text-gray-400">
-        © 2024 Your Company Name. All rights reserved.
-      </p>
-    </div>
-  </footer>
+  <slot />
 </Layout>
