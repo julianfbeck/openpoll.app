@@ -10,6 +10,7 @@ const session = await getSession(Astro.request);
 if (!session) return Astro.redirect('/login');
 ---
 
-<SiteLayout currentPage="login" title="Sign In">
+<SiteLayout currentPage="" title="Sign In">
   <CommentsOverviewWrapper client:load />
+
 </SiteLayout>

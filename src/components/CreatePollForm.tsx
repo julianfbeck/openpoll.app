@@ -55,7 +55,7 @@ export function CreatePollForm() {
   }
 
   return (
-    <div className="w-full max-w-4xl bg-white rounded-lg border p-8 shadow-xl">
+    <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
           <FormField
