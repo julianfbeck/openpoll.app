@@ -4,14 +4,12 @@ import { getSession } from 'auth-astro/server';
 
 import Layout from '../layouts/Layout.astro';
 import CommentsOverviewWrapper from '../components/CreatePollFormWrapper';
-import { db } from '../utils/db';
+import SiteLayout from '@/layouts/SiteLayout.astro';
 
 const session = await getSession(Astro.request);
 if (!session) return Astro.redirect('/login');
 ---
 
-<Layout title=`TinyPoll`>
-  <main class="flex justify-center items-center min-h-screen bg-gray-100">
-    <CommentsOverviewWrapper client:load />
-  </main>
-</Layout>
+<SiteLayout currentPage="login" title="Sign In">
+  <CommentsOverviewWrapper client:load />
+</SiteLayout>

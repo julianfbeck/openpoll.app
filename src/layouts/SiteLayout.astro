@@ -11,9 +11,14 @@ interface Props {
 const { title, currentPage } = Astro.props;
 ---
 
-<Layout title="title">
+<Layout title={title}>
   <!-- Card in the upper third of the page -->
-  <Sidebar currentPage="about" />
+  <Sidebar currentPage={currentPage}>
+    <!-- title -->
 
-  <slot />
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100">
+      {title}
+    </h1>
+    <slot />
+  </Sidebar>
 </Layout>
