@@ -46,7 +46,7 @@ export function PollForm({ poll: poll }: { poll: Poll }) {
   };
 
   return (
-    <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md mx-4">
+    <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         {data?.question}
       </h1>

@@ -1,10 +1,10 @@
 ---
 import { getSession } from 'auth-astro/server';
 import '@/styles/globals.css';
-import Layout from '../../../layouts/Layout.astro';
 import { createCaller } from '../../../lib/trpc/routers/_app';
 import type { Poll } from '../../../models/types';
 import PollFormWrapper from '@/components/PollFormWrapper';
+import SiteLayout from '@/layouts/SiteLayout.astro';
 
 const { id } = Astro.params;
 
@@ -20,8 +20,6 @@ const caller = createCaller({
 const poll = (await caller.poll.get(id)) as Poll;
 ---
 
-<Layout title=`Poll: ${poll.question}`>
-  <main class="flex justify-center items-center min-h-screen bg-gray-100">
-    <PollFormWrapper client:load poll={poll} />
-  </main>
-</Layout>
+<SiteLayout currentPage="poll" title=`Poll: ${poll.question}`>
+  <PollFormWrapper client:load poll={poll} />
+</SiteLayout>

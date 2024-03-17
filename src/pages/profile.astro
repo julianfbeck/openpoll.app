@@ -7,6 +7,7 @@ import { db } from '../utils/db';
 import { eq, sql } from 'drizzle-orm';
 import { polls } from '@/models/schema';
 import { UserProfile } from '../components/Profile';
+import SiteLayout from '@/layouts/SiteLayout.astro';
 const session = await getSession(Astro.request);
 if (!session?.user) return Astro.redirect('/login');
 
@@ -18,8 +19,6 @@ const userPolls = await db.query.polls.findMany({
 });
 ---
 
-<Layout title="Profile">
-  <main class="flex justify-center items-center min-h-screen bg-gray-100">
-    <UserProfile polls={userPolls} />
-  </main>
-</Layout>
+<SiteLayout currentPage="profile" title="Your Profile">
+  <UserProfile polls={userPolls} />
+</SiteLayout>
