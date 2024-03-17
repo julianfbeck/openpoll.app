@@ -2,7 +2,6 @@ import type { APIRoute } from 'astro';
 import { Redis } from 'ioredis';
 
 export const GET: APIRoute = async ({ request, params }) => {
-  console.log('hey');
   const id = params.id as string;
 
   if (!id) {
@@ -43,16 +42,19 @@ export const GET: APIRoute = async ({ request, params }) => {
     if (!isControllerClosed) {
       isControllerClosed = true;
       // Proper cleanup logic here
-      redisSubscriber.unsubscribe().then(() => {
-        return redisSubscriber.quit();
-      }).catch(console.error);
+      redisSubscriber
+        .unsubscribe()
+        .then(() => {
+          return redisSubscriber.quit();
+        })
+        .catch(console.error);
       // No direct controller.close() here as it's not accessible, but the stream will be closed automatically after cancel
     }
   }
 
   return new Response(customReadable, {
     headers: {
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
       'Content-Encoding': 'none',
       'Cache-Control': 'no-cache, no-transform',
       'Content-Type': 'text/event-stream; charset=utf-8'
