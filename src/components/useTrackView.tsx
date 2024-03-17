@@ -1,41 +1,21 @@
+import { trpcReact } from '@/lib/trpc/client';
 import { useEffect } from 'react';
 
-// Type definition for the hook's input and possible backend response
-interface TrackViewMutationResponse {
-  // Define the expected structure of your backend response here
-  message: string;
-}
+const usePollViewTracker = (pollId: string) => {
+  const { mutate } = trpcReact.view.view.useMutation();
 
-// // The hook's main functionality
-// function useTrackViews(pollId: string): UseMutationResult<TrackViewMutationResponse, unknown, void, unknown> {
-//   // Using react-query's useMutation to handle the backend request
-//   const mutation = useMutation<TrackViewMutationResponse, unknown, void>(() => {
-//     // Define how to send the view increase request to your backend here
-//     // This is a placeholder URL and fetch request
-//     return fetch('https://your-backend.com/api/views/increase', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ pollId }),
-//     }).then((res) => res.json());
-//   });
+  useEffect(() => {
+    if (!window) return;
+    const viewedPolls = localStorage.getItem('viewedPolls');
+    let viewedPollsArray = viewedPolls ? JSON.parse(viewedPolls) : [];
 
-//   useEffect(() => {
-//     const viewedPolls = localStorage.getItem('viewedPolls') ? JSON.parse(localStorage.getItem('viewedPolls')!) : [];
+    if (!viewedPollsArray.includes(pollId)) {
+      mutate(pollId);
 
-//     // Check if the pollId is not already saved in localStorage
-//     if (!viewedPolls.includes(pollId)) {
-//       // Add the pollId to the array and save it back to localStorage
-//       viewedPolls.push(pollId);
-//       localStorage.setItem('viewedPolls', JSON.stringify(viewedPolls));
+      viewedPollsArray.push(pollId);
+      localStorage.setItem('viewedPolls', JSON.stringify(viewedPollsArray));
+    }
+  }, [pollId, mutate]);
+};
 
-//       // Trigger the mutation to increase the view count in the backend
-//       mutation.mutate();
-//     }
-//   }, [pollId, mutation]);
-
-//   return mutation;
-// }
-
-// export default useTrackViews;
+export default usePollViewTracker;

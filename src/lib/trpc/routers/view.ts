@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { authenticatedProcedure, publicProcedure, router } from '../root';
-import { pollOptions, polls } from '@/models/schema';
+import { publicProcedure, router } from '../root';
+import { polls } from '@/models/schema';
 import { db } from '@/utils/db';
-import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
+import Redis from 'ioredis';
 
 export const viewRouter = router({
   view: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
@@ -18,6 +18,8 @@ export const viewRouter = router({
         })
         .where(eq(polls.id, poll!.id));
     });
-    return shortId;
+    // trigger event emitter
+    const redis = new Redis();
+    await redis.publish(`update:${input}`, JSON.stringify({ update: true }));
   })
 });

@@ -16,6 +16,7 @@ import type { Poll } from '@/models/types';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useVotedPolls } from './useVotedPolls';
+import usePollViewTracker from './useTrackView';
 
 const FormSchema = z.object({
   votes: z.array(z.number()).refine((value) => value.some((item) => item), {
@@ -25,6 +26,7 @@ const FormSchema = z.object({
 
 export function VoteForm({ poll: poll }: { poll: Poll }) {
   const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
+  usePollViewTracker(poll.shortId);
   const { data: pollData, isLoading } = trpcReact.poll.get.useQuery(
     poll.shortId,
     {

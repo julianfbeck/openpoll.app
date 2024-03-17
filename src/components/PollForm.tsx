@@ -10,10 +10,11 @@ import {
   CardHeader,
   CardTitle
 } from './ui/card';
+import usePollViewTracker from './useTrackView';
 
 export function PollForm({ poll: poll }: { poll: Poll }) {
   const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
-
+  usePollViewTracker(poll.shortId);
   const { data, refetch } = trpcReact.poll.get.useQuery(poll.shortId, {
     initialData: poll,
     refetchInterval: 10000
@@ -100,7 +101,7 @@ export function PollForm({ poll: poll }: { poll: Poll }) {
             </svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{0}</div>
+            <div className="text-2xl font-bold">{data?.views}</div>
           </CardContent>
         </Card>
       </div>
