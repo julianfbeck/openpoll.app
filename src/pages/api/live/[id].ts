@@ -1,14 +1,15 @@
 import type { APIRoute } from 'astro';
 import { Redis } from 'ioredis';
-const redisSubscriber = new Redis('redis://localhost:6379');
 
 export const GET: APIRoute = async ({ request, params }) => {
+  console.log('hey');
   const id = params.id as string;
 
   if (!id) {
     return new Response('Not found', { status: 404 });
   }
 
+  const redisSubscriber = new Redis('redis://localhost:6379');
   const encoder = new TextEncoder();
   let isControllerClosed = false; // Flag to track if the controller is closed
 
@@ -18,34 +19,40 @@ export const GET: APIRoute = async ({ request, params }) => {
         if (err) console.log(err);
       });
 
-      // Listen for new posts from Redis
       redisSubscriber.on('message', (channel, message) => {
-        console.log(channel, message);
         if (channel === `update:${id}` && !isControllerClosed) {
           controller.enqueue(encoder.encode(`data: ${message}\n\n`));
-        }
-        if (isControllerClosed) {
-          redisSubscriber.unsubscribe(`update:${id}`);
         }
       });
 
       redisSubscriber.on('end', () => {
-        isControllerClosed = true; // Update flag when the controller is closed
-        controller.close();
+        if (!isControllerClosed) {
+          isControllerClosed = true;
+          controller.close(); // Ensures the stream is properly closed
+          console.log('Subscriber is closed');
+        }
       });
     },
-    cancel() {
-      //this is important to close the connection, otherwise it can crash the server
-      console.log('Controller is closed');
-      isControllerClosed = true;
-      redisSubscriber.unsubscribe(`update:${id}`);
-      redisSubscriber.quit();
+    cancel(reason) {
+      console.log('Stream cancelled:', reason);
+      cleanUp();
     }
   });
 
+  function cleanUp() {
+    if (!isControllerClosed) {
+      isControllerClosed = true;
+      // Proper cleanup logic here
+      redisSubscriber.unsubscribe().then(() => {
+        return redisSubscriber.quit();
+      }).catch(console.error);
+      // No direct controller.close() here as it's not accessible, but the stream will be closed automatically after cancel
+    }
+  }
+
   return new Response(customReadable, {
     headers: {
-      Connection: 'keep-alive',
+      'Connection': 'keep-alive',
       'Content-Encoding': 'none',
       'Cache-Control': 'no-cache, no-transform',
       'Content-Type': 'text/event-stream; charset=utf-8'

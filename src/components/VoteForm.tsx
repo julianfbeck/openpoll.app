@@ -62,7 +62,7 @@ export function VoteForm({ poll: poll }: { poll: Poll }) {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md mx-4">
+    <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
