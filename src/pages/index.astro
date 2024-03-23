@@ -7,7 +7,7 @@ import CommentsOverviewWrapper from '../components/CreatePollFormWrapper';
 import SiteLayout from '@/layouts/SiteLayout.astro';
 
 const session = await getSession(Astro.request);
-if (!session) return Astro.redirect('/login');
+if (!session) return Astro.redirect('/api/auth/signin');
 ---
 
 <SiteLayout currentPage="" title="Sign In">

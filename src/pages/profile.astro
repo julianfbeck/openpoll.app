@@ -9,7 +9,7 @@ import { polls } from '@/models/schema';
 import { UserProfile } from '../components/Profile';
 import SiteLayout from '@/layouts/SiteLayout.astro';
 const session = await getSession(Astro.request);
-if (!session?.user) return Astro.redirect('/login');
+if (!session?.user) return Astro.redirect('/api/auth/signin');
 
 const userPolls = await db.query.polls.findMany({
   where: eq(polls.creatorId, session.user!.id),
