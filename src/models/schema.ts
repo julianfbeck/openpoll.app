@@ -54,7 +54,8 @@ export const users = sqliteTable('user', {
   name: text('name'),
   email: text('email').notNull(),
   emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
-  image: text('image')
+  image: text('image'),
+  api_key: text('api_key').$defaultFn(() => `op_${nanoid(15)}`)
 });
 
 export const verificationTokens = sqliteTable(

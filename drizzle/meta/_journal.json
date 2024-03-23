@@ -50,6 +50,13 @@
       "when": 1709806846838,
       "tag": "0006_nervous_nighthawk",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1711212486154,
+      "tag": "0007_famous_kitty_pryde",
+      "breakpoints": true
     }
   ]
 }

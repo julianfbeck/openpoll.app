@@ -1,8 +1,6 @@
-"use client";
-
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,17 +9,19 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '@/components/ui/card';
+import { trpcReact } from '@/lib/trpc/client';
 
 const apiKeySchema = z.object({}); // As no fields are being validated, this is just a placeholder.
 
 export function SettingsForm() {
+  const { data, refetch } = trpcReact.api.get.useQuery();
   const { handleSubmit } = useForm({
-    resolver: zodResolver(apiKeySchema),
+    resolver: zodResolver(apiKeySchema)
   });
 
-  const onGenerateApiKey = (data) => {
+  const onGenerateApiKey = () => {
     // API key generation logic here
   };
 
@@ -31,9 +31,7 @@ export function SettingsForm() {
         <Card>
           <CardHeader>
             <CardTitle>Delete Account</CardTitle>
-            <CardDescription>
-              Permanently delete your account.
-            </CardDescription>
+            <CardDescription>Permanently delete your account.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="destructive">Delete Account</Button>
@@ -48,9 +46,12 @@ export function SettingsForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onGenerateApiKey)} className="flex flex-col gap-4">
+            <form
+              onSubmit={handleSubmit(onGenerateApiKey)}
+              className="flex flex-col gap-4"
+            >
               <Input
-                defaultValue="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                defaultValue={data?.apiKey ?? ''}
                 disabled
                 placeholder="API Key"
               />
