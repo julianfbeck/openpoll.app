@@ -20,7 +20,7 @@ export function SettingsForm() {
   const { data } = trpcReact.api.get.useQuery();
   const { mutate: rotateKey } = trpcReact.api.rotate.useMutation({
     onMutate: () => {
-      utils.api.get.invalidate();
+      utils.api.get.cancel();
     },
     onSettled: () => {
       utils.api.get.invalidate();
