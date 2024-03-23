@@ -16,13 +16,22 @@ import { trpcReact } from '@/lib/trpc/client';
 const apiKeySchema = z.object({}); // As no fields are being validated, this is just a placeholder.
 
 export function SettingsForm() {
-  const { data, refetch } = trpcReact.api.get.useQuery();
+  const utils = trpcReact.useUtils();
+  const { data } = trpcReact.api.get.useQuery();
+  const { mutate: rotateKey } = trpcReact.api.rotate.useMutation({
+    onMutate: () => {
+      utils.api.get.invalidate();
+    },
+    onSettled: () => {
+      utils.api.get.invalidate();
+    }
+  });
   const { handleSubmit } = useForm({
     resolver: zodResolver(apiKeySchema)
   });
 
   const onGenerateApiKey = () => {
-    // API key generation logic here
+    rotateKey();
   };
 
   return (
@@ -52,6 +61,7 @@ export function SettingsForm() {
             >
               <Input
                 defaultValue={data?.apiKey ?? ''}
+                value={data?.apiKey ?? ''}
                 disabled
                 placeholder="API Key"
               />

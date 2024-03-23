@@ -3,6 +3,7 @@ import { polls, users } from '@/models/schema';
 import { db } from '@/utils/db';
 import { eq, sql } from 'drizzle-orm';
 import Redis from 'ioredis';
+import { nanoid } from 'nanoid';
 
 export const apiKeyRouter = router({
   get: authenticatedProcedure.query(async ({ input, ctx }) => {
@@ -17,21 +18,15 @@ export const apiKeyRouter = router({
       return user?.api_key ?? '';
     });
     return { apiKey };
+  }),
+  rotate: authenticatedProcedure.mutation(async ({ ctx }) => {
+    if (!ctx.user) {
+      return;
+    }
+    const userID = ctx.user.user!.id;
+    await db
+      .update(users)
+      .set({ api_key: `op_${nanoid(15)}` })
+      .where(eq(users.id, userID));
   })
-
-  //   rotate : authenticatedProcedure.mutation(async ({ ctx }) => {
-
-  // 	await db.transaction(async (tx) => {
-  // 	  if (!ctx.user) {
-  // 		return;
-  // 	  }
-  // 	  const userID = ctx.user.user!.id;
-  // 	  await tx.query.users.update({
-  // 		where: eq(users.id, userID),
-  // 		data: {
-  // 		  api_key: `op_${nanoid(15)}`
-  // 		}
-  // 	  });
-  // 	});
-  //   }
 });
