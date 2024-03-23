@@ -6,9 +6,10 @@ import '@/styles/globals.css';
 interface Props {
   title: string;
   currentPage: string;
+  hideCard?: boolean;
 }
 
-const { title, currentPage } = Astro.props;
+const { title, currentPage, hideCard } = Astro.props;
 ---
 
 <Layout title={title}>
@@ -21,7 +22,9 @@ const { title, currentPage } = Astro.props;
         {title}
       </h1>
       <div
-        class="max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden md:max-w-4xl lg:max-w-5xl"
+        class={hideCard
+          ? ''
+          : 'max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden md:max-w-4xl lg:max-w-5xl'}
       >
         <div class="p-4 md:p-8">
           <slot />

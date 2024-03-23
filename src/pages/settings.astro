@@ -1,0 +1,13 @@
+---
+import '@/styles/globals.css';
+import { getSession } from 'auth-astro/server';
+
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import { SettingsForm } from '@/components/settings-form';
+const session = await getSession(Astro.request);
+if (!session?.user) return Astro.redirect('/login');
+---
+
+<SiteLayout currentPage="settings" title="Your Settings" hideCard>
+  <SettingsForm />
+</SiteLayout>
