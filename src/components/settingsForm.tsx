@@ -34,8 +34,16 @@ export function SettingsForm() {
     rotateKey();
   };
 
+  const copyToClipboard = async (apiKey: string) => {
+    try {
+      await navigator.clipboard.writeText(apiKey);
+      alert('API Key copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
   return (
-    <div className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
+    <div className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 max-w-lg mx-auto md:max-w-4xl lg:max-w-5xl">
       <div className="grid gap-6">
         <Card>
           <CardHeader>
@@ -65,7 +73,15 @@ export function SettingsForm() {
                 disabled
                 placeholder="API Key"
               />
-              <Button type="submit">Rotate Key</Button>
+              <div className="flex gap-2">
+                <Button type="submit">Rotate Key</Button>
+                <Button
+                  type="button"
+                  onClick={() => copyToClipboard(data?.apiKey)}
+                >
+                  Copy
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>

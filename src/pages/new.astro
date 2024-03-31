@@ -10,6 +10,6 @@ const session = await getSession(Astro.request);
 if (!session) return Astro.redirect('/api/auth/signin');
 ---
 
-<SiteLayout currentPage="" title="Sign In">
+<SiteLayout currentPage="new" title="Create new Poll">
   <CommentsOverviewWrapper client:load />
 </SiteLayout>
