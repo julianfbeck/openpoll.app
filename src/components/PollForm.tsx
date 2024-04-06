@@ -3,17 +3,19 @@ import { trpcReact } from '@/lib/trpc/client';
 import type { Poll, PollOption } from '@/models/types';
 import { useVotedPolls } from './useVotedPolls';
 import { Button } from './ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import usePollViewTracker from './useTrackView';
+import type { User } from '@auth/core/types';
 
-export function PollForm({ poll: poll }: { poll: Poll }) {
+export function PollForm({
+  poll: poll,
+  user: user
+}: {
+  poll: Poll;
+  user: User | undefined;
+}) {
   const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
+
   usePollViewTracker(poll.shortId);
   const { data, refetch } = trpcReact.poll.get.useQuery(poll.shortId, {
     initialData: poll,
@@ -48,6 +50,16 @@ export function PollForm({ poll: poll }: { poll: Poll }) {
       return (
         <Button asChild>
           <a href={`/poll/${poll.shortId}/vote`}>Vote</a>
+        </Button>
+      );
+    }
+  };
+
+  const EditButton = () => {
+    if (poll.creatorId == user?.id) {
+      return (
+        <Button asChild>
+          <a href={`/poll/${poll.shortId}/edit`}>Edit</a>
         </Button>
       );
     }
@@ -104,10 +116,33 @@ export function PollForm({ poll: poll }: { poll: Poll }) {
             <div className="text-2xl font-bold">{data?.views}</div>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium"> Share Poll</CardTitle>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              className="h-4 w-4 text-muted-foreground"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </CardHeader>
+          <CardContent>
+            <div className="text-1xl font-bold">{data?.shortId}</div>
+          </CardContent>
+        </Card>
       </div>
       <div className="border-b border-gray-200 mb-6"></div>
       <PollOptions options={data?.options ?? []} />
       <HasVotedButton hasVotedOnPoll={hasVotedOnPoll} />
+      <EditButton />
     </div>
   );
 }

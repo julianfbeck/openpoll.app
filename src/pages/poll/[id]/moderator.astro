@@ -1,0 +1,28 @@
+---
+import '@/styles/globals.css';
+import Layout from '../../../layouts/Layout.astro';
+
+import VoteFormWrapper from '../../../components/VoteFormWrapper';
+import { getSession } from 'auth-astro/server';
+import { createCaller } from '@/lib/trpc/routers/_app';
+import type { Poll } from '@/models/types';
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import ModeratorFormWrapper from '@/components/ModeratorFormWrapper';
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/');
+}
+const session = await getSession(Astro.request);
+const caller = createCaller({
+  user: session,
+  req: Astro.request,
+  resHeaders: Astro.response.headers
+});
+const poll = (await caller.poll.get(id)) as Poll;
+---
+
+<SiteLayout currentPage="vote" title="Vote">
+  <ModeratorFormWrapper client:load poll={poll} />
+</SiteLayout>

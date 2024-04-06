@@ -4,16 +4,10 @@ import { useState } from 'react';
 import { CreatePollForm } from './CreatePollForm';
 import { trpcReact } from '@/lib/trpc/client';
 import type { Poll } from '@/models/types';
-import { PollForm } from './PollForm';
-import type { User } from '@auth/core/types';
+import { VoteForm } from './VoteForm';
+import { ModeratorForm } from './ModeratorForm';
 
-const PollFormWrapper = ({
-  poll: poll,
-  user: user
-}: {
-  poll: Poll;
-  user: User | undefined;
-}) => {
+const ModeratorFormWrapper = ({ poll }: { poll: Poll }) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpcReact.createClient({
@@ -28,9 +22,9 @@ const PollFormWrapper = ({
   return (
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <PollForm poll={poll} user={user} />
+        <ModeratorForm poll={poll}></ModeratorForm>
       </QueryClientProvider>
     </trpcReact.Provider>
   );
 };
-export default PollFormWrapper;
+export default ModeratorFormWrapper;
