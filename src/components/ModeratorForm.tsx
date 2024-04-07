@@ -15,12 +15,18 @@ import {
   DialogTitle,
   DialogTrigger
 } from './ui/dialog';
+import { PollOptionEditDialog } from './PollOptionEditDialog';
 
 const EditOptionSchema = z.object({
   optionText: z.string().min(1, 'The option text must not be empty.')
 });
 
 export function ModeratorForm({ poll }: { poll: Poll }) {
+  const { data, refetch } = trpcReact.poll.get.useQuery(poll.shortId, {
+    initialData: poll,
+    refetchInterval: 10000
+  });
+
   //   const setAsCurrentMutation = trpcReact.poll.setAsCurrent.useMutation();
   //   const deleteOptionMutation = trpcReact.poll.deleteOption.useMutation();
   //   const updateOptionMutation = trpcReact.poll.updateOption.useMutation();
@@ -73,7 +79,7 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
     <div>
       <Form {...form}>
         <form className="space-y-8">
-          {poll.options.map((item: PollOption) => (
+          {data?.options.map((item: PollOption) => (
             <FormItem
               className="flex flex-row items-center justify-between space-x-3 p-4 shadow"
               key={item.id}
@@ -95,36 +101,7 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
                 >
                   Delete
                 </Button>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>Edit</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Edit Poll Option</DialogTitle>
-                      <DialogClose>Close</DialogClose>
-                    </DialogHeader>
-                    <Form {...form}>
-                      <form
-                        onSubmit={handleSubmit((data) =>
-                          handleEditOption(data, item.id)
-                        )}
-                      >
-                        <FormField 
-						control={form.control}
-						>
-                          <input
-                            {...register('optionText', { required: true })}
-                            className="form-input"
-                            placeholder="Option text"
-                            defaultValue={item.option} // Pre-fill with current option text
-                          />
-                        </FormField>
-                        <Button type="submit">Save Changes</Button>
-                      </form>
-                    </Form>
-                  </DialogContent>
-                </Dialog>
+                <PollOptionEditDialog option={item} onClose={refetch} />
               </div>
             </FormItem>
           ))}
