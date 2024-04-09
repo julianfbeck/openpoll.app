@@ -77,5 +77,57 @@ export const pollRouter = router({
           JSON.stringify({ update: true })
         );
       });
+    }),
+  selectCurrentPollOption: authenticatedProcedure
+    .input(
+      z.object({
+        shortId: z.string(),
+        optionId: z.number()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const poll = await db.query.polls.findFirst({
+        where: eq(polls.shortId, input.shortId)
+      });
+
+      if (!poll) {
+        throw new Error('Poll not found');
+      }
+
+      if (poll.creatorId !== ctx.user.user!.id) {
+        throw new Error('You are not the creator of this poll');
+      }
+
+      await db.transaction(async (tx) => {
+        await tx
+          .update(polls)
+          .set({
+            selectedPollOptionId: input.optionId
+          })
+          .where(eq(polls.id, poll.id));
+      });
+    }),
+
+  deletePollOption: authenticatedProcedure
+    .input(
+      z.object({
+        shortId: z.string(),
+        optionId: z.number()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const poll = await db.query.polls.findFirst({
+        where: eq(polls.shortId, input.shortId)
+      });
+
+      if (!poll) {
+        throw new Error('Poll not found');
+      }
+
+      if (poll.creatorId !== ctx.user.user!.id) {
+        throw new Error('You are not the creator of this poll');
+      }
+
+      await db.delete(pollOptions).where(eq(pollOptions.id, input.optionId));
     })
 });

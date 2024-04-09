@@ -16,19 +16,36 @@ import {
   DialogTrigger
 } from './ui/dialog';
 import { PollOptionEditDialog } from './PollOptionEditDialog';
+import { toast } from './ui/use-toast';
 
 const EditOptionSchema = z.object({
   optionText: z.string().min(1, 'The option text must not be empty.')
 });
 
 export function ModeratorForm({ poll }: { poll: Poll }) {
+  const utils = trpcReact.useUtils();
   const { data, refetch } = trpcReact.poll.get.useQuery(poll.shortId, {
     initialData: poll,
     refetchInterval: 10000
   });
 
-  //   const setAsCurrentMutation = trpcReact.poll.setAsCurrent.useMutation();
-  //   const deleteOptionMutation = trpcReact.poll.deleteOption.useMutation();
+  const setAsCurrentMutation =
+    trpcReact.poll.selectCurrentPollOption.useMutation({
+      onMutate: () => {
+        utils.poll.get.cancel();
+      },
+      onSettled: () => {
+        utils.poll.get.invalidate();
+      }
+    });
+  const deleteOptionMutation = trpcReact.poll.deletePollOption.useMutation({
+    onMutate: () => {
+      utils.api.get.cancel();
+    },
+    onSettled: () => {
+      utils.api.get.invalidate();
+    }
+  });
   //   const updateOptionMutation = trpcReact.poll.updateOption.useMutation();
   const form = useForm<z.infer<typeof EditOptionSchema>>({
     resolver: zodResolver(EditOptionSchema)
@@ -51,27 +68,39 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
 
   async function handleSetAsCurrent(optionId: number) {
     try {
-      //   await setAsCurrentMutation.mutateAsync({
-      //     shortId: poll.shortId,
-      //     optionId: optionId,
-      //   });
-      // Optionally refresh data or indicate success to the user
+      await setAsCurrentMutation.mutateAsync({
+        shortId: poll.shortId,
+        optionId: optionId
+      });
+      toast({
+        title: 'Option updated successfully',
+        description: 'The poll option has been updated.'
+      });
     } catch (error) {
-      console.error(error);
-      // Handle error
+      toast({
+        title: 'Error updating option',
+        description: `An error occurred while updating the poll option. ${error}`,
+        variant: 'destructive'
+      });
     }
   }
 
   async function handleDeleteOption(optionId: number) {
     try {
-      //   await deleteOptionMutation.mutateAsync({
-      //     shortId: poll.shortId,
-      //     optionId: optionId,
-      //   });
-      // Optionally refresh data or indicate success to the user
+      await deleteOptionMutation.mutateAsync({
+        shortId: poll.shortId,
+        optionId: optionId
+      });
+      toast({
+        title: 'Option deleted successfully',
+        description: 'The poll option has been deleted.'
+      });
     } catch (error) {
-      console.error(error);
-      // Handle error
+      toast({
+        title: 'Error deleting option',
+        description: `An error occurred while deleting the poll option. ${error}`,
+        variant: 'destructive'
+      });
     }
   }
 

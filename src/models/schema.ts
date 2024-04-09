@@ -3,9 +3,9 @@ import {
   integer,
   primaryKey,
   sqliteTable,
-  text,
-  view
+  text
 } from 'drizzle-orm/sqlite-core';
+
 import type { AdapterAccount } from '@auth/core/adapters';
 import { nanoid } from 'nanoid';
 
@@ -83,7 +83,10 @@ export const polls = sqliteTable(
       .$defaultFn(() => nanoid(10)),
     creatorId: text('creatorId')
       .notNull()
-      .references(() => users.id, { onDelete: 'cascade' })
+      .references(() => users.id, { onDelete: 'cascade' }),
+    isLocked: integer('isLocked', { mode: 'boolean' }).notNull().default(false),
+    selectedPollOptionId: integer('selectedPollOptionId')
+    
   },
   (table) => {
     return {
