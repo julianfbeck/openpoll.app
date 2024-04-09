@@ -129,5 +129,34 @@ export const pollRouter = router({
       }
 
       await db.delete(pollOptions).where(eq(pollOptions.id, input.optionId));
+    }),
+
+  editPollOption: authenticatedProcedure
+    .input(
+      z.object({
+        shortId: z.string(),
+        optionId: z.number(),
+        optionText: z.string().min(1).max(200)
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const poll = await db.query.polls.findFirst({
+        where: eq(polls.shortId, input.shortId)
+      });
+
+      if (!poll) {
+        throw new Error('Poll not found');
+      }
+
+      if (poll.creatorId !== ctx.user.user!.id) {
+        throw new Error('You are not the creator of this poll');
+      }
+
+      await db
+        .update(pollOptions)
+        .set({
+          option: input.optionText
+        })
+        .where(eq(pollOptions.id, input.optionId));
     })
 });

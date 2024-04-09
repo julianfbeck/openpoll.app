@@ -89,7 +89,6 @@ export function CreatePollForm() {
                     </FormControl>
                     <Button
                       className="ml-3"
-                      type="button"
                       variant="destructive"
                       size="sm"
                       onClick={() => remove(index)}
@@ -105,7 +104,6 @@ export function CreatePollForm() {
 
           <div className="flex item-center justify-between">
             <Button
-              type="button"
               variant="outline"
               size="sm"
               onClick={() => append({ label: '' })}

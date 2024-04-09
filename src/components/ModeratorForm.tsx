@@ -1,26 +1,8 @@
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import { Button } from './ui/button';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { trpcReact } from '@/lib/trpc/client';
 import type { Poll, PollOption } from '@/models/types';
-import { Form, FormField, FormItem, FormLabel } from './ui/form';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from './ui/dialog';
 import { PollOptionEditDialog } from './PollOptionEditDialog';
 import { toast } from './ui/use-toast';
-
-const EditOptionSchema = z.object({
-  optionText: z.string().min(1, 'The option text must not be empty.')
-});
 
 export function ModeratorForm({ poll }: { poll: Poll }) {
   const utils = trpcReact.useUtils();
@@ -46,25 +28,6 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
       utils.api.get.invalidate();
     }
   });
-  //   const updateOptionMutation = trpcReact.poll.updateOption.useMutation();
-  const form = useForm<z.infer<typeof EditOptionSchema>>({
-    resolver: zodResolver(EditOptionSchema)
-  });
-
-  const { register, handleSubmit, reset } = form;
-
-  const handleEditOption = async (
-    data: { optionText: string },
-    optionId: number
-  ) => {
-    // await updateOptionMutation.mutateAsync({
-    //   shortId: poll.shortId,
-    //   optionId: optionId,
-    //   optionText: data.optionText
-    // });
-    reset(); // Reset the form after submission
-    // Optionally, refresh data or show a success message
-  };
 
   async function handleSetAsCurrent(optionId: number) {
     try {
@@ -106,36 +69,30 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
 
   return (
     <div>
-      <Form {...form}>
-        <form className="space-y-8">
-          {data?.options.map((item: PollOption) => (
-            <FormItem
-              className="flex flex-row items-center justify-between space-x-3 p-4 shadow"
-              key={item.id}
+      {data?.options.map((item: PollOption) => (
+        <div
+          className={`flex flex-row items-center justify-between space-x-3 p-4 shadow ${data.selectedPollOptionId === item.id ? 'bg-green-100 border border-green-500' : ''}`}
+          key={item.id}
+        >
+          <div className="text-sm font-normal">{item.option}</div>
+          <div>
+            <Button onClick={() => handleSetAsCurrent(item.id)}>
+              Set as Current
+            </Button>
+            <Button
+              onClick={() => handleDeleteOption(item.id)}
+              className="ml-2"
             >
-              <FormLabel className="text-sm font-normal">
-                {item.option}
-              </FormLabel>
-              <div>
-                <Button
-                  type="button"
-                  onClick={() => handleSetAsCurrent(item.id)}
-                >
-                  Set as Current
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => handleDeleteOption(item.id)}
-                  style={{ marginLeft: '10px' }}
-                >
-                  Delete
-                </Button>
-                <PollOptionEditDialog option={item} onClose={refetch} />
-              </div>
-            </FormItem>
-          ))}
-        </form>
-      </Form>
+              Delete
+            </Button>
+            <PollOptionEditDialog poll={poll} option={item} onClose={refetch} />
+          </div>
+        </div>
+      ))}
+      <div className="flex flex-row items-center justify-between  py-3">
+        <Button>Add Option</Button>
+        <Button variant="destructive">Delete Poll </Button>
+      </div>
     </div>
   );
 }

@@ -22,45 +22,43 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { trpcReact } from '@/lib/trpc/client';
-import type { PollOption } from '@/models/types';
+import type { Poll, PollOption } from '@/models/types';
 
-// Define your PollOption type (assuming structure)
-
-// Form schema using Zod
 const editOptionSchema = z.object({
   optionText: z.string().min(1, 'Option text must not be empty.')
 });
 
-// Props for the PollOptionEditDialog component
 type PollOptionEditDialogProps = {
   option: PollOption;
+  poll: Poll;
   onClose: () => void;
 };
 
 export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
+  poll,
   option,
   onClose
 }) => {
-  //   const updateOptionMutation = trpcReact.poll.updateOption.useMutation();
+  const updateOptionMutation = trpcReact.poll.editPollOption.useMutation();
   const form = useForm<z.infer<typeof editOptionSchema>>({
     resolver: zodResolver(editOptionSchema),
     defaultValues: {
-      optionText: option.option // Pre-fill the form with the current option text
+      optionText: option.option
     }
   });
 
   const onSubmit = async (data: { optionText: string }) => {
     try {
-      //   await updateOptionMutation.mutateAsync({
-      //     shortId: option.shortId,
-      //     optionId: option.id,
-      //     optionText: data.optionText
-      //   });
+      await updateOptionMutation.mutateAsync({
+        shortId: poll.shortId,
+        optionId: option.id,
+        optionText: data.optionText
+      });
       toast({
         title: 'Option updated successfully',
         description: 'The poll option has been updated.'
       });
-      onClose(); // Close the dialog after successful update
+      onClose();
     } catch (error) {
       console.error(error);
       toast({
@@ -72,7 +70,7 @@ export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className="ml-2">
         <Button variant="outline">Edit</Button>
       </DialogTrigger>
       <DialogContent>
