@@ -10,10 +10,7 @@ import {
 } from '@/components/ui/table';
 import type { Poll } from '@/models/types';
 
-import { Tooltip } from './ui/tooltip';
-import { Button } from './ui/button';
-
-export function UserProfile({ polls }: { polls: Poll[] }) {
+export function PollsTable({ polls }: { polls: Poll[] }) {
   return (
     <div>
       <Table>

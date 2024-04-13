@@ -75,7 +75,12 @@ export function SettingsForm() {
               />
               <div className="flex gap-2">
                 <Button type="submit">Rotate Key</Button>
-                <Button onClick={() => copyToClipboard(data?.apiKey ?? '')}>
+
+                <Button
+                  type="button"
+                  variant={'outline'}
+                  onClick={() => copyToClipboard(data?.apiKey ?? '')}
+                >
                   Copy
                 </Button>
               </div>

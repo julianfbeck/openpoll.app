@@ -6,7 +6,7 @@ import Layout from '../layouts/Layout.astro';
 import { db } from '../utils/db';
 import { eq, sql } from 'drizzle-orm';
 import { polls } from '@/models/schema';
-import { UserProfile } from '../components/Profile';
+import { PollsTable } from '../components/Polls';
 import SiteLayout from '@/layouts/SiteLayout.astro';
 const session = await getSession(Astro.request);
 if (!session?.user) return Astro.redirect('/api/auth/signin');
@@ -19,6 +19,7 @@ const userPolls = await db.query.polls.findMany({
 });
 ---
 
-<SiteLayout currentPage="profile" title="Your Profile">
-  <UserProfile polls={userPolls} />
+<SiteLayout currentPage="polls" title="Your Polls">
+  <PollsTable polls={userPolls} />
 </SiteLayout>
+../components/Polls
