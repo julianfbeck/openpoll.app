@@ -18,7 +18,13 @@ export type CreateInput = z.infer<typeof createInput>;
 
 export const POST: APIRoute = async ({ request }) => {
   //get auth header from request
-  const auth = request.headers.get('Authorization');
+  // get auutorisation bearer header
+
+  const authHeader = request.headers.get('Authorization');
+  const auth =
+    authHeader && authHeader.startsWith('Bearer ')
+      ? authHeader.substring(7)
+      : null;
 
   if (!auth) {
     return new Response('Unauthorized', { status: 401 });

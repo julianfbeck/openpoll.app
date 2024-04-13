@@ -4,13 +4,18 @@ import type { APIRoute } from 'astro';
 import { eq } from 'drizzle-orm';
 
 export const GET: APIRoute = async ({ params, request }) => {
-  const auth = request.headers.get('Authorization');
-  if (!auth) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+  const authHeader = request.headers.get('Authorization');
+  const auth =
+    authHeader && authHeader.startsWith('Bearer ')
+      ? authHeader.substring(7)
+      : null;
   const id = params.id;
   if (!id) {
     return new Response('Not found', { status: 404 });
+  }
+
+  if (!auth) {
+    return new Response('Unauthorized', { status: 401 });
   }
 
   return await db.transaction(async (tx) => {
@@ -31,5 +36,5 @@ export const GET: APIRoute = async ({ params, request }) => {
         'Content-Type': 'application/json'
       }
     });
-  }); 
+  });
 };

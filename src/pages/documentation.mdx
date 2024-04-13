@@ -7,34 +7,103 @@ layout: ../layouts/AboutLayout.astro
 ## API Documentation
 > OpenPoll API Documentation
 
-### Create Poll 
-> Create a new poll
+### Endpoint: Create Poll
 
-POST: **/api/poll/create**
+This endpoint allows clients to create a new poll. Clients must be authorized to use this endpoint.
+
+#### HTTP Method
+`POST`
+
+#### Endpoint
+`/api/poll/create`
+
+#### Headers
+- `Authorization`: A valid API key to authenticate the request.
+
+#### Request Body
+The request body must be a JSON object that contains the following properties:
+- `question`: A string representing the poll question.
+- `options`: An array of strings representing the poll options.
 
 ```json
-// Request Body
 {
-	"question": "What is your favorite programming language?",
-	"options": [
-		"Python",
-		"JavaScript",
-		"Java",
-		"C#",
-		"C++",
-		"Go",
-		"Ruby",
-		"Swift",
-		"Kotlin",
-		"Rust"
-	]
+  "question": "What is your favorite programming language?",
+  "options": [
+    "Python",
+    "JavaScript",
+    "Java",
+    "C#",
+    "C++",
+    "Go",
+    "Ruby",
+    "Swift",
+    "Kotlin",
+    "Rust"
+  ]
 }
-// Response Body
+```
 
+#### Successful Response
+A successful response returns HTTP status 200 along with the poll details in JSON format, including a unique URL for accessing the poll and an API URL for further interactions.
+
+```json
 {
-	
+  "id": 31,
+  "question": "What is your favorite programming language?",
+  "timestamp": "2024-04-13T15:10:01",
+  "views": 0,
+  "shortId": "PK_IOGjY5i",
+  "creatorId": "891272f3-4a4c-4bba-b28a-ea3bd3eb5de0",
+  "isLocked": false,
+  "selectedPollOptionId": null,
+  "options": [
+    {
+      "id": 69,
+      "pollId": 31,
+      "option": "Python",
+      "votes": 0
+    },
+    {
+      "id": 70,
+      "pollId": 31,
+      "option": "JavaScript",
+      "votes": 0
+    },
+    // Additional options omitted for brevity
+  ],
+  "url": "https://openpoll.app/PK_IOGjY5i", // Used to accecc the poll on the web
+  "api_url": "http://openpoll.app/api/poll/PK_IOGjY5i" // Used to interact with the poll via the API
 }
- 
+```
+
+#### Error Responses
+- **401 Unauthorized**: Returned if the `Authorization` header is missing or the API key is invalid.
+- **429 Too Many Requests**: Returned if the request rate limit is exceeded. The rate limit is 10 requests per hour per API key.
+
+#### Rate Limiting
+Rate limiting is enforced using a Redis key based on the `Authorization` header. If the number of requests exceeds the limit within an hour, subsequent requests will receive a 429 status code. The limit resets after one hour.
+
+#### Example
+```bash
+curl -X POST \
+  -H "Authorization: Bearer YOUR_API_KEY_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What is your favorite programming language?",
+    "options": [
+      "Python",
+      "JavaScript",
+      "Java",
+      "C#",
+      "C++",
+      "Go",
+      "Ruby",
+      "Swift",
+      "Kotlin",
+      "Rust"
+    ]
+  }' \
+  http://openpoll.app/api/poll/create
 ```
 
 
