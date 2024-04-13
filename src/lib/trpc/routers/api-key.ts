@@ -2,7 +2,6 @@ import { authenticatedProcedure, router } from '../root';
 import { polls, users } from '@/models/schema';
 import { db } from '@/utils/db';
 import { eq, sql } from 'drizzle-orm';
-import Redis from 'ioredis';
 import { nanoid } from 'nanoid';
 
 export const apiKeyRouter = router({

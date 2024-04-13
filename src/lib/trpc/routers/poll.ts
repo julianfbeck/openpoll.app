@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { authenticatedProcedure, publicProcedure, router } from '../root';
+import {
+  authenticatedProcedure,
+  publicProcedure,
+  rateLimitedAuthenticatedProcedure,
+  router
+} from '../root';
 import { pollOptions, polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
@@ -7,11 +12,11 @@ import { eq, sql } from 'drizzle-orm';
 import Redis from 'ioredis';
 
 export const pollRouter = router({
-  create: authenticatedProcedure
+  create: rateLimitedAuthenticatedProcedure
     .input(
       z.object({
         question: z.string().min(1).max(200),
-        options: z.array(z.string().min(1).max(200))
+        options: z.array(z.string().min(1).max(200)).min(2).max(10)
       })
     )
     .mutation(async ({ input, ctx }) => {
