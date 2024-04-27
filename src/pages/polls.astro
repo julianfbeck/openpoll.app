@@ -19,5 +19,5 @@ const userPolls = await db.query.polls.findMany({
 ---
 
 <SiteLayout currentPage="polls" title="Your Polls">
-  <PollsTable polls={userPolls} />
+  <PollsTable client:load polls={userPolls} />
 </SiteLayout>

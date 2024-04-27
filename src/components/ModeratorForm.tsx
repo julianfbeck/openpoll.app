@@ -7,8 +7,7 @@ import { toast } from './ui/use-toast';
 export function ModeratorForm({ poll }: { poll: Poll }) {
   const utils = trpcReact.useUtils();
   const { data, refetch } = trpcReact.poll.get.useQuery(poll.shortId, {
-    initialData: poll,
-    refetchInterval: 10000
+    initialData: poll
   });
 
   const setAsCurrentMutation =
@@ -22,10 +21,10 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
     });
   const deleteOptionMutation = trpcReact.poll.deletePollOption.useMutation({
     onMutate: () => {
-      utils.api.get.cancel();
+      utils.poll.get.cancel();
     },
     onSettled: () => {
-      utils.api.get.invalidate();
+      utils.poll.get.invalidate();
     }
   });
 
@@ -74,11 +73,9 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
           className={`flex flex-wrap items-start justify-between p-4 shadow ${data.selectedPollOptionId === item.id ? 'bg-green-100 border border-green-500' : ''}`}
           key={item.id}
         >
-          {/* Option text with potential to wrap or push buttons to next line */}
-          <div className="text-sm font-normal break-words flex-auto min-w-0 mb-2">
+          <div className="text-sm font-normal break-words flex-auto min-w-0 mb-2 sm:mb-0">
             {item.option}
           </div>
-          {/* Button container that wraps under text if there's not enough space */}
           <div className="flex flex-row space-x-2 self-end">
             <Button onClick={() => handleSetAsCurrent(item.id)}>
               Set as Current
@@ -93,11 +90,6 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
           </div>
         </div>
       ))}
-      <div className="flex flex-row items-center justify-between py-3">
-        <Button>Add Option</Button>
-        <Button variant="destructive">Delete Poll</Button>
-      </div>
-
       <div className="flex flex-row items-center justify-between py-3">
         <Button>Add Option</Button>
         <Button variant="destructive">Delete Poll</Button>

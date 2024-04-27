@@ -9,7 +9,6 @@ import { pollOptions, polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
-import Redis from 'ioredis';
 
 export const pollRouter = router({
   create: rateLimitedAuthenticatedProcedure

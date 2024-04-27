@@ -75,7 +75,9 @@ export const polls = sqliteTable(
   {
     id: integer('id').primaryKey(),
     question: text('question').notNull(),
-    timestamp: text('timestamp').default(sql`CURRENT_TIMESTAMP`),
+    timestamp: text('timestamp')
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
     views: integer('views').notNull().default(0),
     shortId: text('shortId')
       .notNull()
@@ -86,7 +88,6 @@ export const polls = sqliteTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     isLocked: integer('isLocked', { mode: 'boolean' }).notNull().default(false),
     selectedPollOptionId: integer('selectedPollOptionId')
-    
   },
   (table) => {
     return {
