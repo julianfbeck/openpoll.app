@@ -161,10 +161,11 @@ function PollOptions({
 }) {
   const totalVotes = options.reduce((acc, curr) => acc + curr.votes, 0);
   const maxVotes = Math.max(...options.map((option) => option.votes));
+  const sortedOptions = options.sort((a, b) => b.votes - a.votes);
 
   return (
     <>
-      {options.map((option, _) => {
+      {sortedOptions.map((option, _) => {
         // Calculate the width of the progress bar relative to the option with the most votes.
         const widthPercentage =
           maxVotes > 0 ? (option.votes / maxVotes) * 100 : 0;

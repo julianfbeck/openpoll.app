@@ -71,11 +71,15 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
     <div>
       {data?.options.map((item: PollOption) => (
         <div
-          className={`flex flex-row items-center justify-between space-x-3 p-4 shadow ${data.selectedPollOptionId === item.id ? 'bg-green-100 border border-green-500' : ''}`}
+          className={`flex flex-wrap items-start justify-between p-4 shadow ${data.selectedPollOptionId === item.id ? 'bg-green-100 border border-green-500' : ''}`}
           key={item.id}
         >
-          <div className="text-sm font-normal">{item.option}</div>
-          <div>
+          {/* Option text with potential to wrap or push buttons to next line */}
+          <div className="text-sm font-normal break-words flex-auto min-w-0 mb-2">
+            {item.option}
+          </div>
+          {/* Button container that wraps under text if there's not enough space */}
+          <div className="flex flex-row space-x-2 self-end">
             <Button onClick={() => handleSetAsCurrent(item.id)}>
               Set as Current
             </Button>
@@ -89,9 +93,14 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
           </div>
         </div>
       ))}
-      <div className="flex flex-row items-center justify-between  py-3">
+      <div className="flex flex-row items-center justify-between py-3">
         <Button>Add Option</Button>
-        <Button variant="destructive">Delete Poll </Button>
+        <Button variant="destructive">Delete Poll</Button>
+      </div>
+
+      <div className="flex flex-row items-center justify-between py-3">
+        <Button>Add Option</Button>
+        <Button variant="destructive">Delete Poll</Button>
       </div>
     </div>
   );
