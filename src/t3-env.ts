@@ -5,8 +5,6 @@ import { z } from 'zod';
 const runtimeEnv =
   process.env.NODE_ENV === 'production' ? process.env : import.meta.env;
 
-const clientPrefix = 'PUBLIC_' as const;
-
 export const env = createEnv({
   server: {
     AUTH_SECRET: z.string(),

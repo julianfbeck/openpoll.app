@@ -1,5 +1,4 @@
 import { redisClient } from './../redis';
-import type { inferAsyncReturnType } from '@trpc/server';
 import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { getSession } from 'auth-astro/server';
 
@@ -12,4 +11,4 @@ export async function createContext({
   return { req, resHeaders, user, redis };
 }
 
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = Awaited<ReturnType<typeof createContext>>;

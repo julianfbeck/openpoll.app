@@ -21,5 +21,6 @@ export const viewRouter = router({
     // trigger event emitter
     const redis = new Redis();
     await redis.publish(`update:${input}`, JSON.stringify({ update: true }));
+    return { shortId };
   })
 });

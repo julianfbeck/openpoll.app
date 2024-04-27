@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { trpcReact } from '@/lib/trpc/client';
 import type { Poll, PollOption } from '@/models/types';
 import { useVotedPolls } from './useVotedPolls';
@@ -153,7 +153,7 @@ function PollOptions({ options }: { options: PollOption[] }) {
 
   return (
     <>
-      {options.map((option, index) => {
+      {options.map((option, _) => {
         // Calculate the width of the progress bar relative to the option with the most votes.
         const widthPercentage =
           maxVotes > 0 ? (option.votes / maxVotes) * 100 : 0;

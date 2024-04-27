@@ -3,7 +3,6 @@ import { pollOptions, polls, users } from '@/models/schema';
 import type { PollOptionCreate } from '@/models/types';
 import { db } from '@/utils/db';
 import type { APIRoute } from 'astro';
-import type { O } from 'dist/server/chunks/astro_CyAUxlIB.mjs';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 

@@ -2,9 +2,8 @@
 import '@/styles/globals.css';
 import { getSession } from 'auth-astro/server';
 
-import Layout from '../layouts/Layout.astro';
 import { db } from '../utils/db';
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { polls } from '@/models/schema';
 import { PollsTable } from '../components/Polls';
 import SiteLayout from '@/layouts/SiteLayout.astro';
@@ -22,4 +21,3 @@ const userPolls = await db.query.polls.findMany({
 <SiteLayout currentPage="polls" title="Your Polls">
   <PollsTable polls={userPolls} />
 </SiteLayout>
-../components/Polls

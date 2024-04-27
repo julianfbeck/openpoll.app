@@ -1,10 +1,8 @@
 ---
 import { getSession } from 'auth-astro/server';
 import '@/styles/globals.css';
-import Layout from '../layouts/Layout.astro';
-import { Button } from '@/components/ui/button';
 import SiteLayout from '@/layouts/SiteLayout.astro';
-import { SignIn, SignOut } from 'auth-astro/components';
+import { SignIn } from 'auth-astro/components';
 
 const session = await getSession(Astro.request);
 if (session) return Astro.redirect('/');

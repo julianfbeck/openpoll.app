@@ -1,13 +1,12 @@
 ---
 import '@/styles/globals.css';
-import Layout from '../../../layouts/Layout.astro';
 
-import VoteFormWrapper from '../../../components/VoteFormWrapper';
 import { getSession } from 'auth-astro/server';
 import { createCaller } from '@/lib/trpc/routers/_app';
 import type { Poll } from '@/models/types';
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import ModeratorFormWrapper from '@/components/ModeratorFormWrapper';
+import { redisClient } from '@/lib/redis';
 
 const { id } = Astro.params;
 
@@ -18,6 +17,7 @@ const session = await getSession(Astro.request);
 const caller = createCaller({
   user: session,
   req: Astro.request,
+  redis: redisClient,
   resHeaders: Astro.response.headers
 });
 const poll = (await caller.poll.get(id)) as Poll;
