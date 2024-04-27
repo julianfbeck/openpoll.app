@@ -58,8 +58,8 @@ export function PollForm({
   const EditButton = () => {
     if (poll.creatorId == user?.id) {
       return (
-        <Button asChild>
-          <a href={`/poll/${poll.shortId}/edit`}>Edit</a>
+        <Button asChild variant={'secondary'}>
+          <a href={`/poll/${poll.shortId}/moderator`}>Edit</a>
         </Button>
       );
     }
@@ -140,14 +140,25 @@ export function PollForm({
         </Card>
       </div>
       <div className="border-b border-gray-200 mb-6"></div>
-      <PollOptions options={data?.options ?? []} />
-      <HasVotedButton hasVotedOnPoll={hasVotedOnPoll} />
-      <EditButton />
+      <PollOptions
+        options={data?.options ?? []}
+        selectedPollOptionId={data?.selectedPollOptionId ?? undefined}
+      />
+      <div className="flex justify-between">
+        <HasVotedButton hasVotedOnPoll={hasVotedOnPoll} />
+        <EditButton />
+      </div>
     </div>
   );
 }
 
-function PollOptions({ options }: { options: PollOption[] }) {
+function PollOptions({
+  options,
+  selectedPollOptionId
+}: {
+  options: PollOption[];
+  selectedPollOptionId?: number;
+}) {
   const totalVotes = options.reduce((acc, curr) => acc + curr.votes, 0);
   const maxVotes = Math.max(...options.map((option) => option.votes));
 
@@ -163,18 +174,22 @@ function PollOptions({ options }: { options: PollOption[] }) {
 
         return (
           <div
-            key={option.id}
-            className="relative mb-5 rounded-md bg-white h-10 shadow-2xl border"
+            className={`border-2 rounded-md mb-5 ${option.id === selectedPollOptionId ? 'border-green-500' : 'border-gray-200'}`}
           >
             <div
-              className="h-10 rounded-md bg-slate-300 border"
-              style={{ width: `${widthPercentage}%` }}
-            ></div>
-            <div className="absolute inset-0 flex justify-between items-center h-10 mx-4">
-              <span className="text-black">{option.option}</span>
-              <span className="text-gray-800 font-semibold">
-                {votePercentage.toFixed(2)}%
-              </span>
+              key={option.id}
+              className={`relative rounded-md bg-white h-10 shadow-2xl`}
+            >
+              <div
+                className="h-10 rounded-md bg-slate-300 border"
+                style={{ width: `${widthPercentage}%` }}
+              ></div>
+              <div className="absolute inset-0 flex justify-between items-center h-10 mx-4">
+                <span className="text-black">{option.option}</span>
+                <span className="text-gray-800 font-semibold">
+                  {votePercentage.toFixed(2)}%
+                </span>
+              </div>
             </div>
           </div>
         );

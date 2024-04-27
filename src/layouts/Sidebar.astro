@@ -22,7 +22,7 @@ const session = await getSession(Astro.request);
     data-drawer-toggle="default-sidebar"
     aria-controls="default-sidebar"
     type="button"
-    class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+    class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
     onclick="toggleSidebar()"
   >
     <span class="sr-only">Open sidebar</span>
@@ -43,7 +43,7 @@ const session = await getSession(Astro.request);
 
   <aside
     id="default-sidebar"
-    class="sidebar fixed top-0 left-0 z-40 w-64 h-screen flex flex-col transition-transform -translate-x-full sm:translate-x-0"
+    class="sidebar fixed top-0 left-0 z-40 w-64 h-screen flex flex-col transition-transform -translate-x-full md:translate-x-0"
     aria-label="Sidebar"
   >
     <div class="flex-1 px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
@@ -241,7 +241,7 @@ const session = await getSession(Astro.request);
     </div>
   </aside>
 
-  <div class="p-4 sm:ml-64">
+  <div class="p-4 md:ml-64">
     <div
       class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700"
     >

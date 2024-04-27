@@ -57,7 +57,7 @@ export const pollRouter = router({
         optionIds: z.array(z.number().min(1).max(200))
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       await db.transaction(async (tx) => {
         const poll = await tx.query.polls.findFirst({
           where: eq(polls.shortId, input.shortId)
@@ -76,8 +76,7 @@ export const pollRouter = router({
         }
 
         // trigger event emitter
-        const redis = new Redis();
-        await redis.publish(
+        ctx.redis.publish(
           `update:${input.shortId}`,
           JSON.stringify({ update: true })
         );
@@ -111,6 +110,11 @@ export const pollRouter = router({
           })
           .where(eq(polls.id, poll.id));
       });
+
+      ctx.redis.publish(
+        `update:${input.shortId}`,
+        JSON.stringify({ update: true })
+      );
     }),
 
   deletePollOption: authenticatedProcedure
@@ -134,6 +138,10 @@ export const pollRouter = router({
       }
 
       await db.delete(pollOptions).where(eq(pollOptions.id, input.optionId));
+      ctx.redis.publish(
+        `update:${input.shortId}`,
+        JSON.stringify({ update: true })
+      );
     }),
 
   editPollOption: authenticatedProcedure
@@ -163,5 +171,9 @@ export const pollRouter = router({
           option: input.optionText
         })
         .where(eq(pollOptions.id, input.optionId));
+      ctx.redis.publish(
+        `update:${input.shortId}`,
+        JSON.stringify({ update: true })
+      );
     })
 });
