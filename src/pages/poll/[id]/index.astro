@@ -4,7 +4,7 @@ import '@/styles/globals.css';
 import { createCaller } from '../../../lib/trpc/routers/_app';
 import type { Poll } from '../../../models/types';
 import PollFormWrapper from '@/components/PollFormWrapper';
-import SiteLayout from '@/layouts/SiteLayout.astro';
+import SiteLayout from '@/layouts/CardLayout.astro';
 import { redisClient } from '@/lib/redis';
 
 const { id } = Astro.params;

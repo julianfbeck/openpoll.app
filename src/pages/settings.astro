@@ -2,7 +2,7 @@
 import '@/styles/globals.css';
 import { getSession } from 'auth-astro/server';
 
-import SiteLayout from '@/layouts/SiteLayout.astro';
+import SiteLayout from '@/layouts/CardLayout.astro';
 import SettingsFormWrapper from '@/components/SettingsFormWrapper';
 const session = await getSession(Astro.request);
 if (!session?.user) return Astro.redirect('/api/auth/signin');

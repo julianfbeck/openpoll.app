@@ -5,7 +5,7 @@ import VoteFormWrapper from '../../../components/VoteFormWrapper';
 import { getSession } from 'auth-astro/server';
 import { createCaller } from '@/lib/trpc/routers/_app';
 import type { Poll } from '@/models/types';
-import SiteLayout from '@/layouts/SiteLayout.astro';
+import SiteLayout from '@/layouts/CardLayout.astro';
 import { redisClient } from '@/lib/redis';
 
 const { id } = Astro.params;

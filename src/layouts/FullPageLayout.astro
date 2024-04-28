@@ -1,0 +1,20 @@
+---
+import Layout from './Layout.astro';
+import Sidebar from './Sidebar.astro';
+import '@/styles/globals.css';
+
+interface Props {
+  title: string;
+  currentPage: string;
+}
+
+const { title, currentPage } = Astro.props;
+---
+
+<Layout title={title}>
+  <div class="md:ml-64">
+    <Sidebar currentPage={currentPage}>
+      <slot />
+    </Sidebar>
+  </div>
+</Layout>

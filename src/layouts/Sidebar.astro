@@ -240,35 +240,29 @@ const session = await getSession(Astro.request);
       </ul>
     </div>
   </aside>
-
-  <div class="p-4 md:ml-64">
-    <div
-      class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700"
-    >
-      <!-- main content here -->
-      <slot />
-    </div>
-  </div>
-  <script is:inline>
-    function toggleSidebar() {
-      const sidebar = document.getElementById('default-sidebar');
-      const overlay = document.getElementById('overlay');
-      sidebar.classList.toggle('-translate-x-full');
-      overlay.classList.toggle('hidden');
-    }
-    document.querySelectorAll('.sidebar-link').forEach((link) => {
-      link.addEventListener('click', (event) => {
-        // Prevent default link behavior
-        event.preventDefault();
-
-        // Logic to change the page content goes here
-
-        // Update active link visually
-        document
-          .querySelectorAll('.sidebar-link')
-          .forEach((l) => l.classList.remove('active'));
-        link.classList.add('active');
-      });
-    });
-  </script>
+  <!-- main content here -->
+  <slot />
 </div>
+
+<script is:inline>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('default-sidebar');
+    const overlay = document.getElementById('overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+  document.querySelectorAll('.sidebar-link').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      // Prevent default link behavior
+      event.preventDefault();
+
+      // Logic to change the page content goes here
+
+      // Update active link visually
+      document
+        .querySelectorAll('.sidebar-link')
+        .forEach((l) => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+</script>
