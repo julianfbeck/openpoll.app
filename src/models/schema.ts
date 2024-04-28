@@ -79,6 +79,7 @@ export const polls = sqliteTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     views: integer('views').notNull().default(0),
+    votes: integer('votes').notNull().default(0),
     shortId: text('shortId')
       .notNull()
       .notNull()

@@ -66,13 +66,17 @@ export const pollRouter = router({
         }
 
         for (const optionId of input.optionIds) {
-          const response = await tx
+          await tx
             .update(pollOptions)
             .set({
               votes: sql`${pollOptions.votes} + 1`
             })
             .where(eq(pollOptions.id, Number(optionId)));
         }
+
+        await tx.update(polls).set({
+          votes: sql`${polls.votes} + 1`
+        });
 
         // trigger event emitter
         ctx.redis.publish(

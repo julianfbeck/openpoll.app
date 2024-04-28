@@ -91,9 +91,7 @@ export function PollForm({
           </CardHeader>
           <CardContent>
             {/* calculate 32 bit */}
-            <div className="text-2xl font-bold">
-              {data?.options.reduce((acc, option) => acc + option.votes, 0)}
-            </div>
+            <div className="text-2xl font-bold">{data?.votes}</div>
           </CardContent>
         </Card>
         <Card>
