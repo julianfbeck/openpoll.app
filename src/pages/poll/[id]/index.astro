@@ -23,6 +23,6 @@ const poll = (await caller.poll.get(id)) as Poll;
 const user = session?.user;
 ---
 
-<SiteLayout currentPage="poll" title=`Poll: ${poll.question}`>
+<SiteLayout currentPage="poll" title={poll.question} titleStart='Poll'>
   <PollFormWrapper client:load poll={poll} user={user} />
 </SiteLayout>

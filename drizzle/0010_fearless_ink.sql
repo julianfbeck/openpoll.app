@@ -1,0 +1,1 @@
+ALTER TABLE polls ADD `event` text NOT NULL;

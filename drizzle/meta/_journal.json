@@ -71,6 +71,13 @@
       "when": 1714297670115,
       "tag": "0009_overrated_joystick",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1714321135531,
+      "tag": "0010_fearless_ink",
+      "breakpoints": true
     }
   ]
 }

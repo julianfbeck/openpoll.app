@@ -74,6 +74,7 @@ export const polls = sqliteTable(
   'polls',
   {
     id: integer('id').primaryKey(),
+    event: text('event').notNull(),
     question: text('question').notNull(),
     timestamp: text('timestamp')
       .default(sql`CURRENT_TIMESTAMP`)

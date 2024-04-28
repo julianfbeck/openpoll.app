@@ -15,7 +15,7 @@ layout: ../layouts/AboutLayout.astro
 ### Links
 
 - [GitHub](https://github.com/julianfbeck/openpoll)
-- [API Documentation](https://openpoll.julianbeck.com/api-docs)
+- [API Documentation](https://openpoll.julianbeck.com/documentation)
 - [Privacy Policy](https://openpoll.julianbeck.com/privacy-policy)
 
 

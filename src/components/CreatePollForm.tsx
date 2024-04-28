@@ -17,6 +17,7 @@ import { trpcReact } from '@/lib/trpc/client';
 
 // Define your form schema using zod
 const pollFormSchema = z.object({
+  eventName: z.string().min(1, { message: 'Please name your Event' }),
   question: z.string().min(1, { message: 'Please enter a poll question.' }),
   options: z.array(
     z.object({
@@ -33,6 +34,7 @@ export function CreatePollForm() {
   const form = useForm<PollFormValues>({
     resolver: zodResolver(pollFormSchema),
     defaultValues: {
+      eventName: 'Event Name',
       question: 'test',
       options: [{ label: 'test1' }, { label: 'test2' }] // Start with two empty options
     }
@@ -45,6 +47,7 @@ export function CreatePollForm() {
 
   async function onSubmit(data: PollFormValues) {
     const shortId = await createPoll.mutateAsync({
+
       question: data.question,
       options: data.options.map((option) => option.label)
     });
@@ -68,7 +71,23 @@ export function CreatePollForm() {
                   <Input placeholder="Your Poll" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Header for your poll. Example: "What's your favorite color?"
+                  What would you like to ask your audience?
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="eventName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Event Name" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Name of the event where the poll will be used.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

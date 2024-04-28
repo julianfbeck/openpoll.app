@@ -68,6 +68,12 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
 
   return (
     <div>
+      <div className="mb-3">
+        <span className="relative flex h-3 w-3 ">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        </span>
+      </div>
       {data?.options.map((item: PollOption) => (
         <div
           className={`flex flex-wrap items-start justify-between p-4 shadow ${data.selectedPollOptionId === item.id ? 'bg-green-100 border border-green-500' : ''}`}
