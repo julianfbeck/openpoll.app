@@ -27,6 +27,7 @@ The request body must be a JSON object that contains the following properties:
 
 ```json
 {
+  "name": "My Poll Event",
   "question": "What is your favorite programming language?",
   "options": [
     "Python",
@@ -49,6 +50,7 @@ A successful response returns HTTP status 200 along with the poll details in JSO
 ```json
 {
   "id": 31,
+  "name": "My Poll Event",
   "question": "What is your favorite programming language?",
   "timestamp": "2024-04-13T15:10:01",
   "views": 0,
@@ -89,6 +91,7 @@ curl -X POST \
   -H "Authorization: Bearer YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{
+    "name": "My Poll Event",
     "question": "What is your favorite programming language?",
     "options": [
       "Python",

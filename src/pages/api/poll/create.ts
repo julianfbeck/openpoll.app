@@ -9,6 +9,7 @@ import { z } from 'zod';
 // create zod object for input
 
 const createInput = z.object({
+  name: z.string().min(1).max(200),
   question: z.string().min(1).max(200),
   options: z.array(z.string().min(1).max(200)).min(2).max(10)
 });
@@ -53,6 +54,7 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response('Unauthorized', { status: 401 });
     }
     const poll = await tx.insert(polls).values({
+      event: input.name,
       question: input.question,
       creatorId: user.id
     });

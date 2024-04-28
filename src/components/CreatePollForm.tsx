@@ -47,7 +47,7 @@ export function CreatePollForm() {
 
   async function onSubmit(data: PollFormValues) {
     const shortId = await createPoll.mutateAsync({
-
+      eventName: data.eventName,
       question: data.question,
       options: data.options.map((option) => option.label)
     });
@@ -61,22 +61,6 @@ export function CreatePollForm() {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-          <FormField
-            control={form.control}
-            name="question"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Poll Question</FormLabel>
-                <FormControl>
-                  <Input placeholder="Your Poll" {...field} />
-                </FormControl>
-                <FormDescription>
-                  What would you like to ask your audience?
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="eventName"
@@ -93,6 +77,23 @@ export function CreatePollForm() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="question"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Poll Question</FormLabel>
+                <FormControl>
+                  <Input placeholder="Your Poll" {...field} />
+                </FormControl>
+                <FormDescription>
+                  What would you like to ask your audience?
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {/* Dynamic poll options fields */}
           {fields.map((field, index) => (
             <FormField

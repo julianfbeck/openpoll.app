@@ -14,6 +14,7 @@ export const pollRouter = router({
   create: rateLimitedAuthenticatedProcedure
     .input(
       z.object({
+        eventName: z.string().min(1).max(200),
         question: z.string().min(1).max(200),
         options: z.array(z.string().min(1).max(200)).min(2).max(10)
       })
@@ -21,6 +22,7 @@ export const pollRouter = router({
     .mutation(async ({ input, ctx }) => {
       const shortId = await db.transaction(async (tx) => {
         const poll = await tx.insert(polls).values({
+          event: input.eventName,
           question: input.question,
           creatorId: ctx.user.user!.id
         });
