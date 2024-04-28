@@ -6,9 +6,9 @@
 ## TODO
 
 - [ ] Implement Toasts for success and error messages 
-- [ ] Implement API
-- [ ] Implement rate limiting
-- [ ] correctly use redis
+- [x] Implement API
+- [x] Implement rate limiting
+- [x] correctly use redis
 - [ ] create readme
 
 
