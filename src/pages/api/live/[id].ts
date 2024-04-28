@@ -28,12 +28,10 @@ export const GET: APIRoute = async ({ request, params }) => {
         if (!isControllerClosed) {
           isControllerClosed = true;
           controller.close(); // Ensures the stream is properly closed
-          console.log('Subscriber is closed');
         }
       });
     },
     cancel(reason) {
-      console.log('Stream cancelled:', reason);
       cleanUp();
     }
   });

@@ -6,7 +6,6 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import usePollViewTracker from './useTrackView';
 import type { User } from '@auth/core/types';
-import { B } from 'dist/client/_astro/client.BxAk09N6';
 
 export function PollForm({
   poll: poll,

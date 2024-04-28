@@ -16,6 +16,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useVotedPolls } from './useVotedPolls';
 import usePollViewTracker from './useTrackView';
+import { toast } from './ui/use-toast';
 
 const FormSchema = z.object({
   votes: z.array(z.number()).refine((value) => value.some((item) => item), {
@@ -54,10 +55,12 @@ export function VoteForm({ poll: poll }: { poll: Poll }) {
       });
       pollData && markPollAsVoted();
       window.location.href = `/poll/${poll.shortId}`;
-      // Handle success, e.g., show a success message or redirect
     } catch (error) {
-      console.log(error);
-      // Handle error, e.g., show an error message
+      toast({
+        title: 'Error voting',
+        description: 'An error occurred while voting.',
+        variant: 'destructive'
+      });
     }
   }
   if (isLoading) return <div>Loading...</div>;
