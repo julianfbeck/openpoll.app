@@ -72,7 +72,7 @@ A successful response returns HTTP status 200 along with the poll details in JSO
     // Additional options omitted for brevity
   ],
   "url": "https://openpoll.app/PK_IOGjY5i", // Used to accecc the poll on the web
-  "api_url": "http://openpoll.app/api/poll/PK_IOGjY5i" // Used to interact with the poll via the API
+  "api_url": "https://openpoll.app/api/poll/PK_IOGjY5i" // Used to interact with the poll via the API
 }
 ```
 
@@ -103,7 +103,67 @@ curl -X POST \
       "Rust"
     ]
   }' \
-  http://openpoll.app/api/poll/create
+  https://openpoll.app/api/poll/create
+```
+---
+
+### Endpoint: Get Poll Details
+
+This endpoint allows clients to retrieve details about a specific poll. Clients must be authorized and have the appropriate privileges to access the poll data.
+
+#### HTTP Method
+`GET`
+
+#### Endpoint
+`/api/poll/{pollId}`
+
+#### URL Parameters
+- `pollId`: The unique identifier for the poll.
+
+#### Headers
+- `Authorization`: A valid API key to authenticate the request.
+
+#### Successful Response
+A successful response returns HTTP status 200 along with the poll details in JSON format.
+
+```json
+{
+  "id": 31,
+  "question": "What is your favorite programming language?",
+  "timestamp": "2024-04-13T15:10:01",
+  "views": 0,
+  "shortId": "PK_IOGjY5i",
+  "creatorId": "891272f3-4a4c-4bba-b28a-ea3bd3eb5de0",
+  "isLocked": false,
+  "selectedPollOptionId": null,
+  "options": [
+    {
+      "id": 69,
+      "pollId": 31,
+      "option": "Python",
+      "votes": 0
+    },
+    {
+      "id": 70,
+      "pollId": 31,
+      "option": "JavaScript",
+      "votes": 0
+    },
+    // Additional options omitted for brevity
+  ],
+  "url": "https://openpoll.app/PK_IOGjY5i",
+  "api_url": "https://openpoll.app/api/poll/PK_IOGjY5i"
+}
 ```
 
+#### Error Responses
+- **401 Unauthorized**: Returned if the `Authorization` header is missing or the API key is invalid.
+- **404 Not Found**: Returned if no poll matches the given `pollId`.
+- **403 Forbidden**: Returned if the authenticated user does not have permission to access the specified poll details.
 
+#### Example
+```bash
+curl -X GET \
+  -H "Authorization: Bearer YOUR_API_KEY_HERE" \
+  https://openpoll.app/api/poll/{pollId}
+```

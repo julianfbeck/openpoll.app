@@ -3,6 +3,7 @@ import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { trpcReact } from '@/lib/trpc/client';
 import { SettingsForm } from './settingsForm';
+import { Toaster } from './ui/toaster';
 
 const VoteFormWrapper = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -20,6 +21,7 @@ const VoteFormWrapper = () => {
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <SettingsForm></SettingsForm>
+        <Toaster />
       </QueryClientProvider>
     </trpcReact.Provider>
   );

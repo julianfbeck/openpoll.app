@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { trpcReact } from '@/lib/trpc/client';
 import type { Poll } from '@/models/types';
 import { VoteForm } from './VoteForm';
+import { Toaster } from './ui/toaster';
 
 const VoteFormWrapper = ({ poll }: { poll: Poll }) => {
   const [queryClient] = useState(() => new QueryClient());
@@ -21,6 +22,7 @@ const VoteFormWrapper = ({ poll }: { poll: Poll }) => {
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <VoteForm poll={poll}></VoteForm>
+        <Toaster />
       </QueryClientProvider>
     </trpcReact.Provider>
   );

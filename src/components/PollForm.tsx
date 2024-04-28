@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import usePollViewTracker from './useTrackView';
 import type { User } from '@auth/core/types';
+import { B } from 'dist/client/_astro/client.BxAk09N6';
 
 export function PollForm({
   poll: poll,
@@ -64,6 +65,15 @@ export function PollForm({
       );
     }
   };
+  const copyToClipboard = async (apiKey: string) => {
+    try {
+      const url = `${window.location.origin}/poll/${apiKey}/vote`;
+      await navigator.clipboard.writeText(url);
+      alert('Copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
 
   return (
     <div>
@@ -114,7 +124,10 @@ export function PollForm({
             <div className="text-2xl font-bold">{data?.views}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card
+          onClick={() => copyToClipboard(data?.shortId ?? '')}
+          className="cursor-pointer"
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium"> Share Poll</CardTitle>
             <svg
@@ -134,6 +147,7 @@ export function PollForm({
           </CardHeader>
           <CardContent>
             <div className="text-1xl font-bold">{data?.shortId}</div>
+            <div className="text-sm text-gray-700">Click to share</div>
           </CardContent>
         </Card>
       </div>
@@ -176,11 +190,11 @@ function PollOptions({
 
         return (
           <div
-            className={`border-2 rounded-md mb-5 ${option.id === selectedPollOptionId ? 'border-green-500' : 'border-gray-200'}`}
+            className={`border-2 rounded-md mb-5 shadow shadow-secondary  ${option.id === selectedPollOptionId ? 'border-green-500' : 'border-gray-200'}`}
           >
             <div
               key={option.id}
-              className={`relative rounded-md bg-white h-10 shadow-2xl`}
+              className={`relative rounded-md bg-white h-10`}
             >
               <div
                 className="h-10 rounded-md bg-slate-300 border"
