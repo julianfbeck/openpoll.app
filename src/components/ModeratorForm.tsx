@@ -91,7 +91,12 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
         </div>
       ))}
       <div className="flex flex-row items-center justify-between py-3">
-        <Button>Add Option</Button>
+        <div className="space-x-3">
+          <Button>Add Option</Button>
+          <Button variant="outline" asChild>
+            <a href={`/poll/${poll.shortId}`}>View Poll</a>
+          </Button>
+        </div>
         <Button variant="destructive">Delete Poll</Button>
       </div>
     </div>
