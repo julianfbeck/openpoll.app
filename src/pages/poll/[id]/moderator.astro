@@ -23,6 +23,6 @@ const caller = createCaller({
 const poll = (await caller.poll.get(id)) as Poll;
 ---
 
-<SiteLayout currentPage="Moderation" title="Edit Poll">
+<SiteLayout currentPage="Moderation" title={poll.question} titleStart="Edit">
   <ModeratorFormWrapper client:load poll={poll} />
 </SiteLayout>
