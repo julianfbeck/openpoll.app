@@ -159,8 +159,11 @@ function PollOptions({
 }) {
   const totalVotes = options.reduce((acc, curr) => acc + curr.votes, 0);
   const maxVotes = Math.max(...options.map((option) => option.votes));
-  const sortedOptions = options.sort((a, b) => b.votes - a.votes);
-
+  const sortedOptions = options.sort((a, b) => {
+    if (a.id === selectedPollOptionId) return -1;
+    if (b.id === selectedPollOptionId) return 1;
+    return b.votes - a.votes;
+  });
   return (
     <>
       {sortedOptions.map((option, _) => {
