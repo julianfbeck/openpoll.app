@@ -1,1 +1,1 @@
-ALTER TABLE polls ADD `event` text NOT NULL;
+ALTER TABLE polls ADD `event` TEXT NOT NULL DEFAULT 'Event';
