@@ -30,5 +30,10 @@ export default defineConfig({
       wrap: true
     },
     extendDefaultPlugins: true
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['@resvg/resvg-js']
+    }
   }
 });
