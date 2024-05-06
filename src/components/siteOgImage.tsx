@@ -1,5 +1,4 @@
 import type { Poll } from '@/models/types';
-import React from 'react';
 
 export default function OpenGraph({ data }: { data: Poll }) {
   return (
