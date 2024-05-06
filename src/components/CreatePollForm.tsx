@@ -51,7 +51,6 @@ export function CreatePollForm() {
       question: data.question,
       options: data.options.map((option) => option.label)
     });
-
     if (shortId) {
       window.location.href = `/poll/${shortId}`;
     }

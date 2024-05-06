@@ -60,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     const options = input.options.map((option) => ({
-      pollId: poll.lastInsertRowid,
+      pollId: Number(poll.lastInsertRowid),
       option,
       votes: 0
     })) as PollOptionCreate[];

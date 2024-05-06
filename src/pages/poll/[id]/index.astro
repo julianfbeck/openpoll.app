@@ -23,6 +23,6 @@ const poll = (await caller.poll.get(id)) as Poll;
 const user = session?.user;
 ---
 
-<SiteLayout currentPage="poll" title={poll.event} titleStart="Poll">
+<SiteLayout currentPage="poll" title={poll.event} titleStart="Poll" ogPath={new URL(`/api/og/${poll.shortId}.png`, Astro.site).href}>
   <PollFormWrapper client:load poll={poll} user={user} />
 </SiteLayout>

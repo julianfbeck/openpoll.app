@@ -20,27 +20,29 @@ export const pollRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const shortId = await db.transaction(async (tx) => {
+      const lastInsertRowid = await db.transaction(async (tx) => {
         const poll = await tx.insert(polls).values({
           event: input.eventName,
           question: input.question,
           creatorId: ctx.user.user!.id
         });
 
+        const lastInsertRowid = Number(poll.lastInsertRowid);
         const options = input.options.map((option) => ({
-          pollId: poll.lastInsertRowid,
+          pollId: Number(poll.lastInsertRowid),
           option,
           votes: 0
         })) as PollOptionCreate[];
 
         await tx.insert(pollOptions).values(options);
-        const fullPoll = await db.query.polls.findFirst({
-          where: eq(polls.id, Number(poll.lastInsertRowid)),
-          with: { options: true }
-        });
-        return fullPoll?.shortId;
+        return lastInsertRowid;
       });
-      return shortId;
+
+      const fullPoll = await db.query.polls.findFirst({
+        where: eq(polls.id, lastInsertRowid),
+        with: { options: true }
+      });
+      return fullPoll!.shortId;
     }),
 
   get: publicProcedure.input(z.string()).query(async ({ input }) => {
@@ -107,14 +109,12 @@ export const pollRouter = router({
         throw new Error('You are not the creator of this poll');
       }
 
-      await db.transaction(async (tx) => {
-        await tx
-          .update(polls)
-          .set({
-            selectedPollOptionId: input.optionId
-          })
-          .where(eq(polls.id, poll.id));
-      });
+      await db
+        .update(polls)
+        .set({
+          selectedPollOptionId: input.optionId
+        })
+        .where(eq(polls.id, poll.id));
 
       ctx.redis.publish(
         `update:${input.shortId}`,
