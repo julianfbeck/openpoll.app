@@ -9,21 +9,18 @@ export const GET: APIRoute = async ({ params, request }) => {
   if (!id) {
     return new Response('Not found', { status: 404 });
   }
-  console.log('id', id)
-
   const poll = await db.query.polls.findFirst({
     where: eq(polls.shortId, id),
     with: { options: true }
   });
-  
+
   if (!poll) {
     return new Response('Not found', { status: 404 });
   }
-
   return new Response(await generateOgImageForSite(poll), {
     headers: {
       'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=86400, s-maxage=86400'
+      'Cache-Control': 'public, max-age=200, s-maxage=200'
     }
   });
 };

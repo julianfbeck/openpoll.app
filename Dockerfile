@@ -59,5 +59,7 @@ EXPOSE 4321
 # Expose Redis default port
 EXPOSE 6379
 
-# Start both Redis server and your application
+# Start both Redis server and your application and optionally Litestream
+# CMD service redis-server start && sh run.sh --use-litestream
+
 CMD service redis-server start && sh run.sh
