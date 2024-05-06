@@ -8,12 +8,13 @@ interface Props {
   titleStart?: string;
   currentPage: string;
   hideCard?: boolean;
+  ogPath?: string;
 }
 
-const { title, titleStart, currentPage, hideCard } = Astro.props;
+const { title, titleStart, currentPage, hideCard, ogPath } = Astro.props;
 ---
 
-<Layout title={title}>
+<Layout title={title} ogPath={ogPath}>
   <!-- Card in the upper third of the page -->
   <div class="p-4 md:ml-64">
     <div

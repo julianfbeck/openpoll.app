@@ -1,22 +1,69 @@
 ---
+import { Plausible } from 'astro-analytics';
+
 interface Props {
   title: string;
+  ogPath?: string;
+  canonicalURL?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  ogPath,
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).href
+} = Astro.props;
+
+const socialImageURL = ogPath ?? new URL('/og-image.jpg', Astro.site).href;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
+    <meta
+      name="description"
+      content="OpenPoll is a free and open-source platform to create and share polls.
+    Use moderation features to share your polls during a live event or
+    meeting."
+    />
     <meta name="viewport" content="width=device-width" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="author" content="Julian Beck" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="OpenPoll is a free and open-source platform to create and share polls.
+    Use moderation features to share your polls during a live event or
+    meeting."
+    />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta
+      property="twitter:description"
+      content="OpenPoll is a free and open-source platform to create and share polls.
+    Use moderation features to share your polls during a live event or
+    meeting."
+    />
+    <meta property="twitter:image" content={socialImageURL} />
+
+    <!-- Analytics -->
+    <Plausible
+      domain="openpoll.app"
+      src="https://plausible.home.juli.sh/js/script.js"
+    />
+
     <title>{title}</title>
   </head>
   <body>

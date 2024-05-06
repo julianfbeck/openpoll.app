@@ -41,6 +41,7 @@
     "@types/react": "^18.2.58",
     "@types/react-dom": "^18.2.19",
     "astro": "^4.0.8",
+    "astro-analytics": "^2.7.0",
     "auth-astro": "^4.1.1",
     "better-sqlite3": "^9.2.2",
     "class-variance-authority": "^0.7.0",

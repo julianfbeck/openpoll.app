@@ -95,6 +95,9 @@ importers:
       astro:
         specifier: ^4.0.8
         version: 4.4.4(@types/node@20.11.20)(typescript@5.3.3)
+      astro-analytics:
+        specifier: ^2.7.0
+        version: 2.7.0
       auth-astro:
         specifier: ^4.1.1
         version: 4.1.1(@auth/core@0.18.6)(astro@4.4.4(@types/node@20.11.20)(typescript@5.3.3))(next@14.1.0(@babel/core@7.23.9)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1724,6 +1727,9 @@ packages:
   astring@1.8.6:
     resolution: {integrity: sha512-ISvCdHdlTDlH5IpxQJIex7BWBywFWgjJSVdwst+/iQCoEYnyOaQ95+X1JGshuBjGp6nxKUy1jMgE3zPqN7fQdg==}
     hasBin: true
+
+  astro-analytics@2.7.0:
+    resolution: {integrity: sha512-/qctBn7LF9DS3ff2YYFrYtCkLLw2fboPDJUgg3HErygGbEBvebW/eGRftZH4ykDJhlCvwTsSEKz/vff7WllyAw==}
 
   astro@4.4.4:
     resolution: {integrity: sha512-EZrDTN888w4sFKqavGsHu8jSaymyxNwnoqIq5NKlMG9WNU/Xn4Yn41pUdBuAOrgNzRp1NyXXhhV6GV1pN71V2Q==}
@@ -5607,6 +5613,8 @@ snapshots:
   array-iterate@2.0.1: {}
 
   astring@1.8.6: {}
+
+  astro-analytics@2.7.0: {}
 
   astro@4.4.4(@types/node@20.11.20)(typescript@5.3.3):
     dependencies:
