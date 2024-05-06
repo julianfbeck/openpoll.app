@@ -37,9 +37,5 @@ if [ "$use_litestream" = true ] ; then
     exec litestream replicate -exec "node ./dist/server/entry.mjs"
 else
     # Run your app without Litestream
-    if [ ! -f $DB_PATH ]; then
-        echo "Database not found, please restore manually or use Litestream."
-        exit 1
-    fi
     exec node ./dist/server/entry.mjs
 fi
