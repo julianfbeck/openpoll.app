@@ -9,7 +9,7 @@ import mdx from '@astrojs/mdx';
 // https://astro.build/config
 export default defineConfig({
   // site: 'https://openpoll.app',
-  site: 'http://localhost:4321',
+  site: 'https://openpoll.app',
   output: 'server',
   integrations: [
     tailwind({

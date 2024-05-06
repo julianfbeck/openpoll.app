@@ -23,6 +23,11 @@ const caller = createCaller({
 const poll = (await caller.poll.get(id)) as Poll;
 ---
 
-<SiteLayout currentPage="vote" title={poll.event} titleStart="Vote">
+<SiteLayout
+  currentPage="poll"
+  title={poll.event}
+  titleStart="Poll"
+  ogPath={new URL(`/api/og/${poll.shortId}.png`, Astro.site).href}
+>
   <VoteFormWrapper client:load poll={poll} />
 </SiteLayout>

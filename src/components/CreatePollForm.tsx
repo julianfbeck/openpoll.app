@@ -34,9 +34,9 @@ export function CreatePollForm() {
   const form = useForm<PollFormValues>({
     resolver: zodResolver(pollFormSchema),
     defaultValues: {
-      eventName: 'Event Name',
-      question: 'test',
-      options: [{ label: 'test1' }, { label: 'test2' }] // Start with two empty options
+      eventName: '',
+      question: '',
+      options: [{ label: '' }, { label: '' }] // Start with two empty options
     }
   });
 
