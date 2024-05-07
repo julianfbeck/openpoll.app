@@ -1,11 +1,13 @@
 ---
 layout: ../layouts/DocumentationLayout.astro
-
- 
+currentPage: documentation
+title: Documentation
+titleStart: API
 ---
 
 ## API Documentation
-> OpenPoll API Documentation
+OpenPoll features a simple RESTful API that allows clients to interact with the platform programmatically. 
+You are able to create and get polls using the API. To use the api you need to have an API key. The api can be generated in the settings page.
 
 ### Endpoint: Create Poll
 
@@ -71,9 +73,9 @@ A successful response returns HTTP status 200 along with the poll details in JSO
       "option": "JavaScript",
       "votes": 0
     },
-    // Additional options omitted for brevity
+    // Additional options omitted 
   ],
-  "url": "https://openpoll.app/PK_IOGjY5i", // Used to accecc the poll on the web
+  "url": "https://openpoll.app/PK_IOGjY5i", // Used to access the poll on the web
   "api_url": "https://openpoll.app/api/poll/PK_IOGjY5i" // Used to interact with the poll via the API
 }
 ```
@@ -121,7 +123,7 @@ This endpoint allows clients to retrieve details about a specific poll. Clients 
 `/api/poll/{pollId}`
 
 #### URL Parameters
-- `pollId`: The unique identifier for the poll.
+- `pollId`: The unique identifier for the poll. Also called the `shortId`.
 
 #### Headers
 - `Authorization`: A valid API key to authenticate the request.

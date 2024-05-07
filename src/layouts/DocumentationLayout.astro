@@ -1,8 +1,23 @@
 ---
 import SiteLayout from './CardLayout.astro';
+
+//get props
+interface Props {
+  frontmatter: Props;
+  title: string;
+  currentPage: string;
+  titleStart?: string;
+}
+
+const { title, currentPage, titleStart } = Astro.props.frontmatter as Props;
 ---
 
-<SiteLayout title="API-Documentation" , currentPage="documentation" hideCard>
+<SiteLayout
+  title={title}
+  currentPage={currentPage}
+  titleStart={titleStart}
+  hideCard
+>
   <div class="prose">
     <slot />
   </div>
