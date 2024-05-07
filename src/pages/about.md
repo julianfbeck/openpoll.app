@@ -3,7 +3,7 @@ layout: ../layouts/AboutLayout.astro
 ---
 
 ## Welcome to OpenPoll!
-> OpenPoll is a platform for creating and sharing polls. It is a simple and easy-to-use tool for creating polls and sharing them with your friends, family, and colleagues. OpenPoll is completely Open Source. Find the source code on [GitHub](https://github.com/julianfbeck/openpoll). Use the API to create your own custom integrations.
+> OpenPoll is a platform for creating and sharing polls. It is a simple and easy-to-use tool for creating polls and sharing them with your friends, family, and colleagues. OpenPoll is completely Open Source. Find the source code on [GitHub](https://github.com/julianfbeck/openpoll.app). Use the API to create your own custom integrations.
 
 ### Features
 
@@ -14,7 +14,7 @@ layout: ../layouts/AboutLayout.astro
 
 ### Links
 
-- [GitHub](https://github.com/julianfbeck/openpoll)
+- [GitHub](https://github.com/julianfbeck/openpoll.app)
 - [API Documentation](https://openpoll.julianbeck.com/documentation)
 - [Privacy Policy](https://openpoll.julianbeck.com/privacy-policy)
 

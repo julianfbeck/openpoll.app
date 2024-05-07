@@ -5,7 +5,11 @@ import FullPageLayout from '@/layouts/FullPageLayout.astro';
 ---
 
 <FullPageLayout currentPage="OpenPoll" title="OpenPoll">
-  <section id="hero-section" class="flex justify-center px-4" style="padding-top: 10vh; height: 90vh;">
+  <section
+    id="hero-section"
+    class="flex justify-center px-4"
+    style="padding-top: 10vh; height: 90vh;"
+  >
     <div class="max-w-2xl mx-auto text-center">
       <h1 class="text-4xl font-semibold md:text-6xl">
         Create and share polls. Welcome to
@@ -18,7 +22,7 @@ import FullPageLayout from '@/layouts/FullPageLayout.astro';
       </h2>
       <div class="flex flex-col md:flex-row justify-center gap-4 mt-10">
         <a
-          href="https://github.com/julianfbeck/openpoll"
+          href="https://github.com/julianfbeck/openpoll.app"
           class="bg-black text-white text-base px-6 py-2 rounded-lg font-semibold hover:scale-110 hover:opacity-85 transition duration-300 ease-in-out"
           target="_blank"
         >
@@ -49,7 +53,6 @@ import FullPageLayout from '@/layouts/FullPageLayout.astro';
     animation: fadeIn 0.8s ease-in-out forwards;
   }
 </style>
-
 
 <style>
   @keyframes fadeIn {
