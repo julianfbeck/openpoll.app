@@ -26,7 +26,7 @@ OpenPoll is build on top of Astro. It uses the following technologies to create 
 
 ## Self Hosting
 
-OpenPoll can be self-hosted. You can decide to either use Sqlite locally backed by Litestream or use the Turso.  To configure OpenPoll to use Litestream uncomment the specific lines inside the `db.ts` file and add `--use-litestream` to the Dockerfile `run.sh` script.
+OpenPoll can be self-hosted. You can decide to either use Sqlite locally backed by Litestream or use Turso. To configure OpenPoll to use Litestream uncomment the specific lines inside the `db.ts` file and add `--use-litestream` to the Dockerfile `run.sh` script.
 
 Currently im running the OpenPoll on a [Fly.io](https://fly.io) instance. For more information on how to deploy OpenPoll to Fly.io see the [Fly.io Docs](https://fly.io/docs/)
 
