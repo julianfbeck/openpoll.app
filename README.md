@@ -5,7 +5,9 @@
 > OpenPoll is a free and open-source platform to create and share polls. Use moderation features to share your polls during a live event or meetings.
 
 OpenPoll uses SQLite, Server Sent Events, and Redis to create fast real-time polls.
-Build on top of TRPC, Shadcn/UI and litestream/turso
+Build on top of TRPC, Shadcn/UI and litestream/turso.
+
+View Example Poll: [https://openpoll.app/poll/trU02FHXws](https://openpoll.app/poll/trU02FHXws)
 
 ## Tech Stack
 
