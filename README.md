@@ -9,6 +9,8 @@ Build on top of TRPC, Shadcn/UI and litestream/turso.
 
 View Example Poll: [https://openpoll.app/poll/trU02FHXws](https://openpoll.app/poll/trU02FHXws)
 
+![OpenPoll](/.github/example.png)
+
 ## Tech Stack
 
 OpenPoll is build on top of Astro. It uses the following technologies to create a combination of a static and dynamic website. 
