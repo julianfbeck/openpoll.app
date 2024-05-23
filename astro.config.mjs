@@ -1,14 +1,12 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
-import node from '@astrojs/node';
 import auth from 'auth-astro';
 import react from '@astrojs/react';
-
 import mdx from '@astrojs/mdx';
 
-// https://astro.build/config
+import cloudflare from '@astrojs/cloudflare';
+
 export default defineConfig({
-  // site: 'https://openpoll.app',
   site: 'https://openpoll.app',
   output: 'server',
   integrations: [
@@ -19,9 +17,7 @@ export default defineConfig({
     react(),
     mdx()
   ],
-  adapter: node({
-    mode: 'standalone'
-  }),
+  adapter: cloudflare(),
   markdown: {
     shikiConfig: {
       themes: {

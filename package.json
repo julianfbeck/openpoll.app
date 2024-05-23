@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.3.4",
+    "@astrojs/cloudflare": "^10.2.6",
     "@astrojs/mdx": "^2.2.2",
     "@astrojs/node": "^7.0.3",
     "@astrojs/react": "^3.0.10",
