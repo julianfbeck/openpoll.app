@@ -16,7 +16,7 @@ export const pollRouter = router({
       z.object({
         eventName: z.string().min(1).max(200),
         question: z.string().min(1).max(200),
-        options: z.array(z.string().min(1).max(200)).min(2).max(10)
+        options: z.array(z.string().min(1).max(200)).min(2).max(200)
       })
     )
     .mutation(async ({ input, ctx }) => {
