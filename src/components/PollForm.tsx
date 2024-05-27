@@ -190,17 +190,15 @@ function PollOptions({
         return (
           <div
             className={`border-2 rounded-md mb-5 shadow shadow-secondary  ${option.id === selectedPollOptionId ? 'border-green-500' : 'border-gray-200'}`}
+            key={option.id}
           >
-            <div
-              key={option.id}
-              className={`relative rounded-md bg-white h-10`}
-            >
+            <div className="relative rounded-md bg-white h-auto">
               <div
                 className="h-10 rounded-md bg-slate-300 border"
                 style={{ width: `${widthPercentage}%` }}
               ></div>
-              <div className="absolute inset-0 flex justify-between items-center h-10 mx-4">
-                <span className="text-black">{option.option}</span>
+              <div className="absolute inset-0 flex justify-between items-center h-full mx-4">
+                <span className="text-black break-words">{option.option}</span>
                 <span className="text-gray-800 font-semibold">
                   {votePercentage.toFixed(2)}%
                 </span>
