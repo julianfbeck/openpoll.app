@@ -57,7 +57,7 @@ export const pollRouter = router({
     .input(
       z.object({
         shortId: z.string(),
-        optionIds: z.array(z.number().min(1).max(200))
+        optionIds: z.array(z.number())
       })
     )
     .mutation(async ({ input, ctx }) => {
