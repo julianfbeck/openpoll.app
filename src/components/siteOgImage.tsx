@@ -69,9 +69,9 @@ export default function OpenGraph({ data }: { data: Poll }) {
             <circle cx="9" cy="7" r="4" />
             <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
-          <div style={{ fontSize: '3rem', fontWeight: 'bold', fontFamily: "Roboto" }}>
+          {/* <div style={{ fontSize: '3rem', fontWeight: 'bold', fontFamily: "Roboto" }}>
             {data.votes}
-          </div>
+          </div> */}
         </div>
 
         <div
@@ -83,7 +83,7 @@ export default function OpenGraph({ data }: { data: Poll }) {
             alignItems: 'center',
             fontSize: '2.25rem',
             fontWeight: 'bold',
-            fontFamily: "Roboto",
+            fontFamily: 'Roboto'
           }}
         >
           openpoll.app
