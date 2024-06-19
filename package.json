@@ -34,6 +34,7 @@
     "@tanstack/query-core": "5.24.1",
     "@tanstack/react-query": "^5.24.1",
     "@tanstack/react-query-devtools": "^5.24.1",
+    "@tremor/react": "^3.17.2",
     "@trpc/client": "11.0.0-next-beta.294",
     "@trpc/next": "11.0.0-next-beta.294",
     "@trpc/react-query": "11.0.0-next-beta.294",

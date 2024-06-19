@@ -98,6 +98,19 @@ export const polls = sqliteTable(
   }
 );
 
+export const votingTraffic = sqliteTable('votingTraffic', {
+  id: integer('id').primaryKey(),
+  creatorId: text('creatorId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  timestamp: text('timestamp')
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  pollId: integer('pollId')
+    .notNull()
+    .references(() => polls.id, { onDelete: 'cascade' })
+});
+
 export const pollOptions = sqliteTable('pollOptions', {
   id: integer('id').primaryKey(),
   pollId: integer('pollId')
