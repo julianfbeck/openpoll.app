@@ -1,5 +1,6 @@
 ---
 import { Plausible } from 'astro-analytics';
+import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
   title: string;
@@ -65,6 +66,7 @@ const socialImageURL = ogPath ?? new URL('/og-image.jpg', Astro.site).href;
     />
 
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
     <slot />
