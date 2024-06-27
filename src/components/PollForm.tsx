@@ -183,7 +183,7 @@ export function PollForm({
               data={votes}
               index="date"
               categories={['votes']}
-              colors={['indigo', 'rose']}
+              colors={['slate-300']}
               showLegend={false}
               // showXAxis={false}
               showYAxis={false}
