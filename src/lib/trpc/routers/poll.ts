@@ -5,7 +5,7 @@ import {
   rateLimitedAuthenticatedProcedure,
   router
 } from '../root';
-import { pollOptions, polls } from '@/models/schema';
+import { pollOptions, polls, votingTraffic } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
@@ -80,6 +80,10 @@ export const pollRouter = router({
 
         await tx.update(polls).set({
           votes: sql`${polls.votes} + 1`
+        });
+
+        await tx.insert(votingTraffic).values({
+          pollId: poll!.id
         });
 
         // trigger event emitter
