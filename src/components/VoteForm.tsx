@@ -17,6 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useVotedPolls } from './useVotedPolls';
 import usePollViewTracker from './useTrackView';
 import { toast } from './ui/use-toast';
+import { parseMarkdownLinks } from '@/utils/links';
 
 const FormSchema = z.object({
   votes: z.array(z.number()).refine((value) => value.some((item) => item), {
@@ -107,7 +108,7 @@ export function VoteForm({ poll: poll }: { poll: Poll }) {
                             </FormControl>
                           </div>
                           <FormLabel className="text-sm font-normal">
-                            {item.option}
+                            {parseMarkdownLinks(item.option)}
                           </FormLabel>
                         </FormItem>
                       );

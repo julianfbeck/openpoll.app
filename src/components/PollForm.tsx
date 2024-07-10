@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import usePollViewTracker from './useTrackView';
 import type { User } from '@auth/core/types';
+import { parseMarkdownLinks } from '@/utils/links';
 
 export function PollForm({
   poll: poll,
@@ -163,6 +164,8 @@ export function PollForm({
   );
 }
 
+
+
 function PollOptions({
   options,
   selectedPollOptionId
@@ -177,6 +180,7 @@ function PollOptions({
     if (b.id === selectedPollOptionId) return 1;
     return b.votes - a.votes;
   });
+
   return (
     <>
       {sortedOptions.map((option, _) => {
@@ -186,7 +190,7 @@ function PollOptions({
         // Calculate the vote percentage of this option relative to total votes.
         const votePercentage =
           totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
-
+        const optionText = parseMarkdownLinks(option.option);
         return (
           <div
             className={`border-2 rounded-md mb-5 shadow shadow-secondary  ${option.id === selectedPollOptionId ? 'border-green-500' : 'border-gray-200'}`}
@@ -198,7 +202,7 @@ function PollOptions({
                 style={{ width: `${widthPercentage}%` }}
               ></div>
               <div className="absolute inset-0 flex justify-between items-center h-full mx-4">
-                <span className="text-black break-words">{option.option}</span>
+                <span className="text-black break-words">{optionText}</span>
                 <span className="text-gray-800 font-semibold">
                   {votePercentage.toFixed(2)}%
                 </span>

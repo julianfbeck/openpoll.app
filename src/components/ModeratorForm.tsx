@@ -3,6 +3,7 @@ import { trpcReact } from '@/lib/trpc/client';
 import type { Poll, PollOption } from '@/models/types';
 import { PollOptionEditDialog } from './PollOptionEditDialog';
 import { toast } from './ui/use-toast';
+import { parseMarkdownLinks } from '@/utils/links';
 
 export function ModeratorForm({ poll }: { poll: Poll }) {
   const utils = trpcReact.useUtils();
@@ -84,7 +85,7 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
           key={item.id}
         >
           <div className="text-sm font-normal break-words flex-auto min-w-0 mb-2 sm:mb-0">
-            {item.option} - {item.votes} votes
+            {parseMarkdownLinks(item.option)} - {item.votes} votes
           </div>
           <div className="flex flex-row space-x-2 self-end">
             <Button onClick={() => handleSetAsCurrent(item.id)}>
