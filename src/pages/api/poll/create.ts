@@ -11,7 +11,7 @@ import { z } from 'zod';
 const createInput = z.object({
   name: z.string().min(1).max(200),
   question: z.string().min(1).max(200),
-  options: z.array(z.string().min(1).max(200)).min(2).max(200)
+  options: z.array(z.string().min(1).max(500)).min(2).max(200)
 });
 
 export type CreateInput = z.infer<typeof createInput>;
