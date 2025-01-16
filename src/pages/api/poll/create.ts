@@ -6,8 +6,6 @@ import type { APIRoute } from 'astro';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
-// create zod object for input
-
 const createInput = z.object({
   name: z.string().min(1).max(200),
   question: z.string().min(1).max(200),
@@ -17,72 +15,102 @@ const createInput = z.object({
 export type CreateInput = z.infer<typeof createInput>;
 
 export const POST: APIRoute = async ({ request }) => {
-  //get auth header from request
-  // get auutorisation bearer header
+  try {
+    // Get auth header from request
+    const authHeader = request.headers.get('Authorization');
+    const auth =
+      authHeader && authHeader.startsWith('Bearer ')
+        ? authHeader.substring(7)
+        : null;
 
-  const authHeader = request.headers.get('Authorization');
-  const auth =
-    authHeader && authHeader.startsWith('Bearer ')
-      ? authHeader.substring(7)
-      : null;
-
-  if (!auth) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
-  //rate limit using redis
-  const limit = 10;
-  const key = `rate-limit-api:${auth}`;
-  const current = await redisClient.incr(key);
-
-  if (current > limit) {
-    await redisClient.expire(key, 3600);
-    return new Response('Too many requests', { status: 429 });
-  }
-  if (current === 1) {
-    await redisClient.expire(key, 3600);
-  }
-
-  const body = await request.json();
-  const input = createInput.parse(body);
-
-  return await db.transaction(async (tx) => {
-    const user = await tx.query.users.findFirst({
-      where: eq(users.api_key, auth)
-    });
-    if (!user) {
+    if (!auth) {
       return new Response('Unauthorized', { status: 401 });
     }
-    const poll = await tx.insert(polls).values({
-      event: input.name,
-      question: input.question,
-      creatorId: user.id
+
+    // Rate limit using redis
+    const limit = 10;
+    const key = `rate-limit-api:${auth}`;
+    const current = await redisClient.incr(key);
+
+    if (current > limit) {
+      await redisClient.expire(key, 3600);
+      return new Response('Too many requests', { status: 429 });
+    }
+
+    if (current === 1) {
+      await redisClient.expire(key, 3600);
+    }
+
+    const body = await request.json();
+    const input = createInput.parse(body);
+
+    return await db.transaction(async (tx) => {
+      const user = await tx.query.users.findFirst({
+        where: eq(users.api_key, auth)
+      });
+
+      if (!user) {
+        return new Response('Unauthorized', { status: 401 });
+      }
+
+      // Insert poll first
+      const [newPoll] = await tx
+        .insert(polls)
+        .values({
+          event: input.name,
+          question: input.question,
+          creatorId: user.id
+        })
+        .returning({
+          id: polls.id,
+          shortId: polls.shortId
+        });
+
+      if (!newPoll) {
+        return new Response('Failed to create poll', { status: 500 });
+      }
+
+      // Insert options
+      const options = input.options.map((option) => ({
+        pollId: newPoll.id,
+        option,
+        votes: 0
+      })) as PollOptionCreate[];
+
+      await tx.insert(pollOptions).values(options);
+
+      // Fetch the complete poll with options
+      const fullPoll = await tx.query.polls.findFirst({
+        where: eq(polls.id, newPoll.id),
+        with: {
+          options: true
+        }
+      });
+
+      if (!fullPoll) {
+        return new Response('Failed to fetch created poll', { status: 500 });
+      }
+
+      const fullPollWithUrl = {
+        ...fullPoll,
+        url: `https://openpoll.app/${fullPoll.shortId}`,
+        api_url: `https://openpoll.app/api/poll/${fullPoll.shortId}`
+      };
+
+      return new Response(JSON.stringify(fullPollWithUrl), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
     });
-
-    const options = input.options.map((option) => ({
-      pollId: Number(poll.lastInsertRowid),
-      option,
-      votes: 0
-    })) as PollOptionCreate[];
-
-    await tx.insert(pollOptions).values(options);
-    const fullPoll = await db.query.polls.findFirst({
-      where: eq(polls.id, Number(poll.lastInsertRowid)),
-      with: { options: true }
+  } catch (error) {
+    console.error('Error creating poll:', error);
+    return new Response(JSON.stringify({ error: 'Failed to create poll' }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
-
-    //add url to poll to be fullObject
-    const fullPollWithUrl = {
-      ...fullPoll,
-      url: `https:///openpoll.app/${fullPoll?.shortId}`,
-      api_url: `http://openpoll.app/api/poll/${fullPoll?.shortId}`
-    };
-
-    return new Response(JSON.stringify(fullPollWithUrl), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  });
+  }
 };
-
-//curl -X POST -H "Authorization : 123" -H "Content-Type: application/json" -d '{"question":"What is your favorite color?","options":["Red","Blue","Green"]}' http://localhost:3000/api/poll/create

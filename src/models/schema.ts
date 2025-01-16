@@ -5,10 +5,8 @@ import {
   sqliteTable,
   text
 } from 'drizzle-orm/sqlite-core';
-
 import type { AdapterAccount } from '@auth/core/adapters';
 import { nanoid } from 'nanoid';
-
 import { relations, sql } from 'drizzle-orm';
 
 export const accounts = sqliteTable(
@@ -98,14 +96,20 @@ export const polls = sqliteTable(
   }
 );
 
-export const pollOptions = sqliteTable('pollOptions', {
-  id: integer('id').primaryKey(),
-  pollId: integer('pollId')
-    .notNull()
-    .references(() => polls.id, { onDelete: 'cascade' }),
-  option: text('option').notNull(),
-  votes: integer('votes').notNull()
-});
+export const pollOptions = sqliteTable(
+  'pollOptions',
+  {
+    id: integer('id').primaryKey(),
+    pollId: integer('pollId')
+      .notNull()
+      .references(() => polls.id, { onDelete: 'cascade' }),
+    option: text('option').notNull(),
+    votes: integer('votes').notNull()
+  },
+  (table) => ({
+    pollIdIdx: index('idx_pollid_on_polloptions').on(table.pollId)
+  })
+);
 
 export const pollsRelations = relations(polls, ({ many }) => ({
   options: many(pollOptions)

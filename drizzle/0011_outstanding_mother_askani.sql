@@ -1,0 +1,1 @@
+CREATE INDEX `idx_pollid_on_polloptions` ON `pollOptions` (`pollId`);
