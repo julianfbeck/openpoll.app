@@ -1,14 +1,14 @@
-import { redisClient } from './../redis';
+import { auth } from '../auth';
 import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
-import { getSession } from 'auth-astro/server';
 
 export async function createContext({
   req,
   resHeaders
 }: FetchCreateContextFnOptions) {
-  const user = await getSession(req);
-  const redis = redisClient;
-  return { req, resHeaders, user, redis };
+  const session = await auth.api.getSession({
+    headers: req.headers
+  });
+  return { req, resHeaders, user: session?.user };
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

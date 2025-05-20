@@ -1,22 +1,20 @@
 import {
-  accounts,
-  comments,
+  account,
   pollOptions,
   polls,
-  sessions,
-  users,
+  session,
+  user,
   verificationTokens
 } from './schema.ts';
 
+
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
-export type Account = InferSelectModel<typeof accounts>;
+export type Account = InferSelectModel<typeof account>;
 
-export type Comment = InferSelectModel<typeof comments>;
+export type Session = InferSelectModel<typeof session>;
 
-export type Session = InferSelectModel<typeof sessions>;
-
-export type User = InferSelectModel<typeof users>;
+export type User = InferSelectModel<typeof user>;
 
 export type Poll = InferSelectModel<typeof polls> & {
   options: PollOption[];

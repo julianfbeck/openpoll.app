@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
-import { trpcReact } from '@/lib/trpc/client';
+import { trpc } from '@/lib/trpc/client';
 import { Toaster } from '../ui/toaster';
 interface Props {
   children: JSX.Element[] | JSX.Element;
@@ -10,7 +10,7 @@ interface Props {
 const DefaultContext = ({ children }: Props) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
-    trpcReact.createClient({
+    trpc.createClient({
       links: [
         httpBatchLink({
           url: '/api/trpc'
@@ -20,10 +20,10 @@ const DefaultContext = ({ children }: Props) => {
   );
 
   return (
-    <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       <Toaster />
-    </trpcReact.Provider>
+    </trpc.Provider>
   );
 };
 export default DefaultContext;

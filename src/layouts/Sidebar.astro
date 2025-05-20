@@ -1,12 +1,14 @@
 ---
-import { getSession } from 'auth-astro/server';
+import { auth } from '@/lib/auth';
+
 
 interface Props {
   currentPage: string;
 }
-
+const session = await auth.api.getSession({
+  headers: Astro.request.headers
+});
 const { currentPage } = Astro.props;
-const session = await getSession(Astro.request);
 ---
 
 <div>

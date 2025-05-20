@@ -1,4 +1,4 @@
-import { polls, users } from '@/models/schema';
+import { polls, user } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { APIRoute } from 'astro';
 import { eq } from 'drizzle-orm';
@@ -19,8 +19,8 @@ export const GET: APIRoute = async ({ params, request }) => {
   }
 
   return await db.transaction(async (tx) => {
-    const user = await tx.query.users.findFirst({
-      where: eq(users.api_key, auth)
+    const u = await tx.query.user.findFirst({
+      where: eq(user.api_key, auth)
     });
 
     const poll = await db.query.polls.findFirst({
@@ -28,7 +28,7 @@ export const GET: APIRoute = async ({ params, request }) => {
       with: { options: true }
     });
 
-    if (poll?.creatorId !== user?.id) {
+    if (poll?.creatorId !== u?.id) {
       return new Response('Unauthorized', { status: 401 });
     }
     return new Response(JSON.stringify(poll), {

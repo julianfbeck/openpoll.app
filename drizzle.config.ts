@@ -2,14 +2,12 @@ import 'dotenv/config';
 import type { Config } from 'drizzle-kit';
 
 export default {
-  schema: './src/models/schema.ts',
+  schema: ['./src/models/schema.ts', './src/models/auth-schema.ts'],
   out: './drizzle',
-  driver: 'better-sqlite',
+  dialect: 'turso',
   dbCredentials: {
-    url:
-      process.env.NODE_ENV === 'production'
-        ? '/data/db.sqlite3'
-        : './db.sqlite3'
+    url: process.env.TURSO_URL || "file:local.db",
+    authToken: process.env.TURSO_AUTH_TOKEN || undefined,
   },
   verbose: true
 } satisfies Config;

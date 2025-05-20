@@ -2,13 +2,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { CreatePollForm } from './CreatePollForm';
-import { trpcReact } from '@/lib/trpc/client';
+import { trpc } from '@/lib/trpc/client';
 import { Toaster } from './ui/toaster';
 
 const CreatePollFormWrapper = () => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
-    trpcReact.createClient({
+    trpc.createClient({
       links: [
         httpBatchLink({
           url: '/api/trpc'
@@ -18,12 +18,12 @@ const CreatePollFormWrapper = () => {
   );
 
   return (
-    <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <CreatePollForm></CreatePollForm>
         <Toaster />
       </QueryClientProvider>
-    </trpcReact.Provider>
+    </trpc.Provider>
   );
 };
 export default CreatePollFormWrapper;

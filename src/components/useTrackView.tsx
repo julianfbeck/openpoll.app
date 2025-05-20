@@ -1,8 +1,8 @@
-import { trpcReact } from '@/lib/trpc/client';
+import { trpc } from '@/lib/trpc/client';
 import { useEffect } from 'react';
 
 const usePollViewTracker = (pollId: string) => {
-  const { mutate } = trpcReact.view.view.useMutation();
+  const { mutate } = trpc.view.view.useMutation();
 
   useEffect(() => {
     if (!window) return;

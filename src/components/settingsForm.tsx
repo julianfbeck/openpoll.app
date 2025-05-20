@@ -11,14 +11,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { trpcReact } from '@/lib/trpc/client';
+import { trpc } from '@/lib/trpc/client';
 
 const apiKeySchema = z.object({}); // As no fields are being validated, this is just a placeholder.
 
 export function SettingsForm() {
-  const utils = trpcReact.useUtils();
-  const { data } = trpcReact.api.get.useQuery();
-  const { mutate: rotateKey } = trpcReact.api.rotate.useMutation({
+  const utils = trpc.useUtils();
+  const { data } = trpc.api.get.useQuery();
+  const { mutate: rotateKey } = trpc.api.rotate.useMutation({
     onMutate: () => {
       utils.api.get.cancel();
     },
