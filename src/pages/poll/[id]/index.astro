@@ -1,7 +1,7 @@
 ---
 import '@/styles/globals.css';
 import { createCaller } from '../../../lib/trpc/routers/_app';
-import type { Poll } from '../../../models/types';
+import type { Poll, User } from '../../../models/types';
 import PollFormWrapper from '@/components/PollFormWrapper';
 import SiteLayout from '@/layouts/CardLayout.astro';
 import { redisClient } from '@/lib/redis';
@@ -32,5 +32,5 @@ const user = session?.user;
   titleStart="Poll"
   ogPath={new URL(`/api/og/${poll.shortId}.png`, Astro.site).href}
 >
-  <PollFormWrapper client:load poll={poll} user={user} />
+  <PollFormWrapper client:load poll={poll} user={user as User} />
 </SiteLayout>
