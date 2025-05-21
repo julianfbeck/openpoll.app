@@ -5,6 +5,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import 'dotenv/config';
 
 export const auth = betterAuth({
+  baseURL: 'http://localhost:4321',
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema: {

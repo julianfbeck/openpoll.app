@@ -7,7 +7,6 @@ const runtimeEnv =
 
 export const env = createEnv({
   server: {
-    AUTH_SECRET: z.string(),
     GITHUB_CLIENT_ID: z.string(),
     GITHUB_CLIENT_SECRET: z.string(),
     TURSO_URL: z.string(),

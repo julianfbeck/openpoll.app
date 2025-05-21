@@ -13,7 +13,7 @@ export default defineConfig({
   output: 'server',
   integrations: [react(), mdx()],
   adapter: node({
-    mode: 'standalone'
+    mode: 'middleware'
   }),
   markdown: {
     shikiConfig: {
