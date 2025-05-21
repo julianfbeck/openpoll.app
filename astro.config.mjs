@@ -1,9 +1,12 @@
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import react from '@astrojs/react';
-import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
-import tailwindcss from "@tailwindcss/vite";
+
+import cloudflare from '@astrojs/cloudflare';
+
+
+import tailwindcss from '@tailwindcss/vite';
 
 
 // https://astro.build/config
@@ -12,9 +15,7 @@ export default defineConfig({
   site: 'https://openpoll.app',
   output: 'server',
   integrations: [react(), mdx()],
-  adapter: node({
-    mode: 'middleware'
-  }),
+  adapter: cloudflare(),
   markdown: {
     shikiConfig: {
       themes: {
@@ -29,6 +30,6 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ['@resvg/resvg-js']
     },
-    plugins: [tailwindcss({})]
+    plugins: [tailwindcss()]
   }
 });
