@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage
 } from './ui/form';
-import { trpc } from '@/lib/trpc/client';
+import { useTRPC } from './CreatePollFormWrapper';
 
 // Define your form schema using zod
 const pollFormSchema = z.object({
@@ -29,7 +29,8 @@ const pollFormSchema = z.object({
 type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
-  const createPoll = trpc.poll.create.useMutation();
+  const trpc = useTRPC();
+  const createPoll = trpc.poll.create.mutationKey();
 
   const form = useForm<PollFormValues>({
     resolver: zodResolver(pollFormSchema),

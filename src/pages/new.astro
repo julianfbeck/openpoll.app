@@ -3,8 +3,18 @@ import '@/styles/globals.css';
 
 import CreatePollFormWrapper from '../components/CreatePollFormWrapper';
 import SiteLayout from '@/layouts/CardLayout.astro';
+console.log(Astro.locals.session);
 
-if (!Astro.locals.session) return Astro.redirect('/api/auth/signin?redirect=/new');
+const session = () => {
+  if (Astro.locals.session) {
+    console.log('session', Astro.locals.session);
+    return Astro.locals.session;
+  } else {
+    // Redirect to login page if the user is not authenticated
+    return Astro.redirect('/login');
+  }
+};
+session();
 ---
 
 <SiteLayout currentPage="new" title="Create new Poll">
