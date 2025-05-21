@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { CreatePollForm } from './CreatePollForm';
-import { Toaster } from './ui/toaster';
+import { Toaster } from './ui/sonner';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
 import type { AppRouter } from '@/lib/trpc/routers/_app';
 
