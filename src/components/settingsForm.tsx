@@ -43,7 +43,7 @@ export function SettingsForm() {
     }
   };
   return (
-    <div className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 max-w-lg mx-auto md:max-w-4xl lg:max-w-5xl">
+    <div className="flex min-h-[calc(100vh-(--spacing(16)))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 max-w-lg mx-auto md:max-w-4xl lg:max-w-5xl">
       <div className="grid gap-6">
         <Card>
           <CardHeader>
