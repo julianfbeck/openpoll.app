@@ -9,6 +9,7 @@
     "dev-replicate": "source .env && litestream replicate -config litestream.private.yml -exec 'astro dev'",
     "preview": "astro preview",
     "astro": "astro",
+    "deploy": "astro build && wrangler pages deploy",
     "generate": "drizzle-kit generate:sqlite"
   },
   "dependencies": {

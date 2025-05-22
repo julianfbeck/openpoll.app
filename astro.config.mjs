@@ -15,7 +15,9 @@ export default defineConfig({
   site: 'https://openpoll.app',
   output: 'server',
   integrations: [react(), mdx()],
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    platformProxy: true
+  }),
   markdown: {
     shikiConfig: {
       themes: {
