@@ -2,7 +2,6 @@ import { z } from 'zod';
 import {
   authenticatedProcedure,
   publicProcedure,
-  rateLimitedAuthenticatedProcedure,
   router
 } from '../root';
 import { pollOptions, polls } from '@/models/schema';
@@ -11,7 +10,7 @@ import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
 
 export const pollRouter = router({
-  create: rateLimitedAuthenticatedProcedure
+  create: authenticatedProcedure
     .input(
       z.object({
         eventName: z.string().min(1).max(200),
@@ -24,7 +23,7 @@ export const pollRouter = router({
         const poll = await tx.insert(polls).values({
           event: input.eventName,
           question: input.question,
-          creatorId: ctx.user.user!.id
+          creatorId: ctx.user.id
         });
 
         const lastInsertRowid = Number(poll.lastInsertRowid);
@@ -83,10 +82,10 @@ export const pollRouter = router({
         });
 
         // trigger event emitter
-        ctx.redis.publish(
-          `update:${input.shortId}`,
-          JSON.stringify({ update: true })
-        );
+        // ctx.redis.publish(
+        //   `update:${input.shortId}`,
+        //   JSON.stringify({ update: true })
+        // );
       });
     }),
   selectCurrentPollOption: authenticatedProcedure
@@ -105,7 +104,7 @@ export const pollRouter = router({
         throw new Error('Poll not found');
       }
 
-      if (poll.creatorId !== ctx.user.user!.id) {
+      if (poll.creatorId !== ctx.user.id) {
         throw new Error('You are not the creator of this poll');
       }
 
@@ -116,10 +115,10 @@ export const pollRouter = router({
         })
         .where(eq(polls.id, poll.id));
 
-      ctx.redis.publish(
-        `update:${input.shortId}`,
-        JSON.stringify({ update: true })
-      );
+      // ctx.redis.publish(
+      //   `update:${input.shortId}`,
+      //   JSON.stringify({ update: true })
+      // );
     }),
 
   deletePollOption: authenticatedProcedure
@@ -138,15 +137,15 @@ export const pollRouter = router({
         throw new Error('Poll not found');
       }
 
-      if (poll.creatorId !== ctx.user.user!.id) {
+      if (poll.creatorId !== ctx.user.id) {
         throw new Error('You are not the creator of this poll');
       }
 
       await db.delete(pollOptions).where(eq(pollOptions.id, input.optionId));
-      ctx.redis.publish(
-        `update:${input.shortId}`,
-        JSON.stringify({ update: true })
-      );
+      // ctx.redis.publish(
+      //   `update:${input.shortId}`,
+      //   JSON.stringify({ update: true })
+      // );
     }),
 
   editPollOption: authenticatedProcedure
@@ -166,7 +165,7 @@ export const pollRouter = router({
         throw new Error('Poll not found');
       }
 
-      if (poll.creatorId !== ctx.user.user!.id) {
+      if (poll.creatorId !== ctx.user.id) {
         throw new Error('You are not the creator of this poll');
       }
 
@@ -176,9 +175,9 @@ export const pollRouter = router({
           option: input.optionText
         })
         .where(eq(pollOptions.id, input.optionId));
-      ctx.redis.publish(
-        `update:${input.shortId}`,
-        JSON.stringify({ update: true })
-      );
+      // ctx.redis.publish(
+      //   `update:${input.shortId}`,
+      //   JSON.stringify({ update: true })
+      // );
     })
 });

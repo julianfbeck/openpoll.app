@@ -1,30 +1,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
-import { trpcReact } from '@/lib/trpc/client';
+import { queryClient, trpc } from '@/lib/trpcs';
 import type { Poll } from '@/models/types';
 import { VoteForm } from './VoteForm';
-import { Toaster } from './ui/toaster';
+import { Toaster } from './ui/sonner';
 
 const VoteFormWrapper = ({ poll }: { poll: Poll }) => {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpcReact.createClient({
-      links: [
-        httpBatchLink({
-          url: '/api/trpc'
-        })
-      ]
-    })
-  );
 
   return (
-    <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <VoteForm poll={poll}></VoteForm>
         <Toaster />
       </QueryClientProvider>
-    </trpcReact.Provider>
   );
 };
 export default VoteFormWrapper;

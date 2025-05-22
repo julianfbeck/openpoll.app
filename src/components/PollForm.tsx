@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { trpcReact } from '@/lib/trpc/client';
 import type { Poll, PollOption } from '@/models/types';
 import { useVotedPolls } from './useVotedPolls';
 import { Button } from './ui/button';
@@ -7,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import usePollViewTracker from './useTrackView';
 import type { User } from '@auth/core/types';
 import { parseMarkdownLinks } from '@/utils/links';
+import { trpc } from '@/lib/trpcs';
+import { useQuery } from '@tanstack/react-query';
 
 export function PollForm({
   poll: poll,
@@ -18,31 +19,32 @@ export function PollForm({
   const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
 
   usePollViewTracker(poll.shortId);
-  const { data, refetch } = trpcReact.poll.get.useQuery(poll.shortId, {
+
+  const { data, refetch } = useQuery(trpc.poll.get.queryOptions(poll.shortId, {
     initialData: poll,
     refetchInterval: 10000
-  });
+  }));
 
-  useEffect(() => {
-    const source = new EventSource(`/api/live/${poll.shortId}`);
+  // useEffect(() => {
+  //   const source = new EventSource(`/api/live/${poll.shortId}`);
 
-    source.addEventListener('open', () => {
-      console.log('SSE opened!');
-    });
+  //   source.addEventListener('open', () => {
+  //     console.log('SSE opened!');
+  //   });
 
-    source.addEventListener('message', (e) => {
-      console.log('Message: ', e);
-      refetch();
-    });
+  //   source.addEventListener('message', (e) => {
+  //     console.log('Message: ', e);
+  //     refetch();
+  //   });
 
-    source.addEventListener('error', (e) => {
-      console.error('Error: ', e);
-    });
+  //   source.addEventListener('error', (e) => {
+  //     console.error('Error: ', e);
+  //   });
 
-    return () => {
-      source.close();
-    };
-  }, []);
+  //   return () => {
+  //     source.close();
+  //   };
+  // }, []);
 
   const HasVotedButton = ({ hasVotedOnPoll }: { hasVotedOnPoll: boolean }) => {
     if (hasVotedOnPoll) {

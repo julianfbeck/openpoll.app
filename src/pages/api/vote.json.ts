@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { getSession } from 'auth-astro/server';
 
 const usernames = ['Sarah', 'Chris', 'Yan', 'Elian'];
 

@@ -1,29 +1,18 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
-import { useState } from 'react';
+import {  QueryClientProvider } from '@tanstack/react-query';
 import { CreatePollForm } from './CreatePollForm';
-import { trpcReact } from '@/lib/trpc/client';
-import { Toaster } from './ui/toaster';
+import { Toaster } from './ui/sonner';
+import { queryClient } from '@/lib/trpcs';
+
+// Create tRPC context
 
 const CreatePollFormWrapper = () => {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpcReact.createClient({
-      links: [
-        httpBatchLink({
-          url: '/api/trpc'
-        })
-      ]
-    })
-  );
 
   return (
-    <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <CreatePollForm></CreatePollForm>
-        <Toaster />
-      </QueryClientProvider>
-    </trpcReact.Provider>
+    <QueryClientProvider client={queryClient}>
+      <CreatePollForm />
+      <Toaster />
+    </QueryClientProvider>
   );
 };
+
 export default CreatePollFormWrapper;

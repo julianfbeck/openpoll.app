@@ -1,17 +1,21 @@
 ---
-import '@/styles/globals.css';
-import { getSession } from 'auth-astro/server';
-
+import { auth } from '@/lib/auth';
 import { db } from '../utils/db';
 import { eq } from 'drizzle-orm';
 import { polls } from '@/models/schema';
 import { PollsTable } from '../components/Polls';
 import SiteLayout from '@/layouts/CardLayout.astro';
-const session = await getSession(Astro.request);
+import type { User } from 'better-auth/types';
+
+const session = await auth.api.getSession({
+  headers: Astro.request.headers
+});
+
 if (!session?.user) return Astro.redirect('/api/auth/signin');
+const user = session.user as User;
 
 const userPolls = await db.query.polls.findMany({
-  where: eq(polls.creatorId, session.user!.id),
+  where: eq(polls.creatorId, user.id),
   with: {
     options: true
   }

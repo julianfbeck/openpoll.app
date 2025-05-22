@@ -1,33 +1,34 @@
 import { Button } from './ui/button';
-import { trpcReact } from '@/lib/trpc/client';
 import type { Poll, PollOption } from '@/models/types';
 import { PollOptionEditDialog } from './PollOptionEditDialog';
-import { toast } from './ui/use-toast';
 import { parseMarkdownLinks } from '@/utils/links';
+import { toast } from 'sonner';
+import { queryClient, trpc } from '@/lib/trpcs';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export function ModeratorForm({ poll }: { poll: Poll }) {
-  const utils = trpcReact.useUtils();
-  const { data, refetch } = trpcReact.poll.get.useQuery(poll.shortId, {
+  const { data, refetch } = useQuery(trpc.poll.get.queryOptions(poll.shortId, {
     initialData: poll
-  });
+  }))
+  const pollKey = trpc.poll.get.queryKey(poll.shortId)
 
-  const setAsCurrentMutation =
-    trpcReact.poll.selectCurrentPollOption.useMutation({
+  const setAsCurrentMutation = useMutation(trpc.poll.selectCurrentPollOption.mutationOptions({
       onMutate: () => {
-        utils.poll.get.cancel();
+        queryClient.cancelQueries({ queryKey: pollKey });
       },
       onSettled: () => {
-        utils.poll.get.invalidate();
+        queryClient.invalidateQueries({ queryKey: pollKey });
       }
-    });
-  const deleteOptionMutation = trpcReact.poll.deletePollOption.useMutation({
+    }))
+
+  const deleteOptionMutation = useMutation(trpc.poll.deletePollOption.mutationOptions({
     onMutate: () => {
-      utils.poll.get.cancel();
+      queryClient.cancelQueries({ queryKey: pollKey });
     },
     onSettled: () => {
-      utils.poll.get.invalidate();
+      queryClient.invalidateQueries({ queryKey: pollKey });
     }
-  });
+  }))
 
   async function handleSetAsCurrent(optionId: number) {
     try {
@@ -35,15 +36,12 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
         shortId: poll.shortId,
         optionId: optionId
       });
-      toast({
-        title: 'Option updated successfully',
+      toast.success('Option updated successfully', {
         description: 'The poll option has been updated.'
       });
     } catch (error) {
-      toast({
-        title: 'Error updating option',
-        description: `An error occurred while updating the poll option. ${error}`,
-        variant: 'destructive'
+      toast.error('Error updating option', {
+        description: `An error occurred while updating the poll option. ${error}`
       });
     }
   }
@@ -54,15 +52,12 @@ export function ModeratorForm({ poll }: { poll: Poll }) {
         shortId: poll.shortId,
         optionId: optionId
       });
-      toast({
-        title: 'Option deleted successfully',
+      toast.success('Option deleted successfully', {
         description: 'The poll option has been deleted.'
       });
     } catch (error) {
-      toast({
-        title: 'Error deleting option',
-        description: `An error occurred while deleting the poll option. ${error}`,
-        variant: 'destructive'
+      toast.error('Error deleting option', {
+        description: `An error occurred while deleting the poll option. ${error}`
       });
     }
   }

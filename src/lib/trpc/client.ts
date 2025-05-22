@@ -1,10 +1,10 @@
-import { createTRPCReact } from '@trpc/react-query';
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { createTRPCClient, createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import type { AppRouter } from './routers/_app';
+import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { QueryClient } from '@tanstack/react-query';
 
-const trpcReact = createTRPCReact<AppRouter>();
 
-const trpcAstro = createTRPCClient<AppRouter>({
+const trpcAstro = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
       url: 'http://localhost:4747/api/trpc'
@@ -12,4 +12,5 @@ const trpcAstro = createTRPCClient<AppRouter>({
   ]
 });
 
-export { trpcReact, trpcAstro };
+
+export { trpcAstro };

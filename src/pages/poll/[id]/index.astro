@@ -1,28 +1,35 @@
 ---
-import { getSession } from 'auth-astro/server';
-import '@/styles/globals.css';
 import { createCaller } from '../../../lib/trpc/routers/_app';
-import type { Poll } from '../../../models/types';
+import type { Poll, User } from '../../../models/types';
 import PollFormWrapper from '@/components/PollFormWrapper';
 import SiteLayout from '@/layouts/CardLayout.astro';
 import { redisClient } from '@/lib/redis';
+import { auth } from '@/lib/auth';
 
 const { id } = Astro.params;
 
 if (!id) {
   return Astro.redirect('/');
 }
-const session = await getSession(Astro.request);
+
+const session = await auth.api.getSession({
+  headers: Astro.request.headers
+});
+
 const caller = createCaller({
-  user: session,
+  user: session?.user,
   req: Astro.request,
-  redis: redisClient,
   resHeaders: Astro.response.headers
 });
 const poll = (await caller.poll.get(id)) as Poll;
 const user = session?.user;
 ---
 
-<SiteLayout currentPage="poll" title={poll.event} titleStart="Poll" ogPath={new URL(`/api/og/${poll.shortId}.png`, Astro.site).href}>
-  <PollFormWrapper client:load poll={poll} user={user} />
+<SiteLayout
+  currentPage="poll"
+  title={poll.event}
+  titleStart="Poll"
+  ogPath={new URL(`/api/og/${poll.shortId}.png`, Astro.site).href}
+>
+  <PollFormWrapper client:load poll={poll} user={user as User} />
 </SiteLayout>

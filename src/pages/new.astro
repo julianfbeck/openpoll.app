@@ -1,12 +1,10 @@
 ---
-import '@/styles/globals.css';
-import { getSession } from 'auth-astro/server';
 
 import CreatePollFormWrapper from '../components/CreatePollFormWrapper';
 import SiteLayout from '@/layouts/CardLayout.astro';
 
-const session = await getSession(Astro.request);
-if (!session) return Astro.redirect('/api/auth/signin?redirect=/new');
+if (!Astro.locals.user?.id) return Astro.redirect('/signin')
+
 ---
 
 <SiteLayout currentPage="new" title="Create new Poll">

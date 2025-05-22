@@ -1,5 +1,5 @@
 import { redisClient } from '@/lib/redis';
-import { pollOptions, polls, users } from '@/models/schema';
+import { pollOptions, polls, user } from '@/models/schema';
 import type { PollOptionCreate } from '@/models/types';
 import { db } from '@/utils/db';
 import type { APIRoute } from 'astro';
@@ -15,6 +15,7 @@ const createInput = z.object({
 export type CreateInput = z.infer<typeof createInput>;
 
 export const POST: APIRoute = async ({ request }) => {
+  console.log('Creating poll');
   try {
     // Get auth header from request
     const authHeader = request.headers.get('Authorization');
@@ -45,11 +46,11 @@ export const POST: APIRoute = async ({ request }) => {
     const input = createInput.parse(body);
 
     return await db.transaction(async (tx) => {
-      const user = await tx.query.users.findFirst({
-        where: eq(users.api_key, auth)
+      const u = await tx.query.user.findFirst({
+        where: eq(user.api_key, auth)
       });
 
-      if (!user) {
+      if (!u) {
         return new Response('Unauthorized', { status: 401 });
       }
 
@@ -59,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
         .values({
           event: input.name,
           question: input.question,
-          creatorId: user.id
+          creatorId: u.id
         })
         .returning({
           id: polls.id,

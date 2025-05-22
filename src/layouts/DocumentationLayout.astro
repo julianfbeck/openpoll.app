@@ -1,5 +1,8 @@
 ---
 import SiteLayout from './CardLayout.astro';
+import { auth } from '@/lib/auth';
+import { db, user } from '@/utils/db';
+import { eq } from 'drizzle-orm';
 
 //get props
 interface Props {
@@ -9,7 +12,30 @@ interface Props {
   titleStart?: string;
 }
 
+// Define User interface
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+  api_key?: string;
+}
+
 const { title, currentPage, titleStart } = Astro.props.frontmatter as Props;
+
+// Get user session and API key
+const session = await auth.api.getSession({
+  headers: Astro.request.headers
+});
+
+let apiKey = null;
+if (session?.user) {
+  const userId = (session.user as User).id;
+  const foundUser = await db.query.user.findFirst({
+    where: eq(user.id, userId)
+  });
+  apiKey = foundUser?.api_key;
+}
 ---
 
 <SiteLayout
@@ -18,7 +44,181 @@ const { title, currentPage, titleStart } = Astro.props.frontmatter as Props;
   titleStart={titleStart}
   hideCard
 >
+  {
+    apiKey && (
+      <div class="bg-gray-100 dark:bg-gray-800 p-4 mb-6 rounded-lg border border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold mb-2">Your API Key</h3>
+        <div class="flex items-center gap-2">
+          <code class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded text-sm font-mono overflow-x-auto flex-1">
+            {apiKey}
+          </code>
+          <button
+            id="copy-api-key"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+            data-api-key={apiKey}
+          >
+            Copy
+          </button>
+        </div>
+        <p class="text-xs mt-2 text-gray-600 dark:text-gray-400">
+          Use this key in the Authorization header of your API requests.
+        </p>
+      </div>
+    )
+  }
+
   <div class="prose">
     <slot />
   </div>
+
+  <style>
+    .code-header {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0.5rem;
+      background-color: #1f2937;
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+      margin-bottom: -0.5rem;
+    }
+
+    .copy-button {
+      background-color: transparent;
+      border: 1px solid #4b5563;
+      border-radius: 0.25rem;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .copy-button:hover {
+      background-color: #374151;
+    }
+
+    :global(pre) {
+      position: relative;
+      margin-top: 0 !important;
+    }
+  </style>
+
+  <script define:vars={{ apiKey }}>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Copy API key functionality
+      const copyApiKeyButton = document.getElementById('copy-api-key');
+      if (copyApiKeyButton) {
+        copyApiKeyButton.addEventListener('click', () => {
+          const apiKey = copyApiKeyButton.getAttribute('data-api-key') || '';
+          navigator.clipboard
+            .writeText(apiKey)
+            .then(() => {
+              const originalText = copyApiKeyButton.textContent;
+              copyApiKeyButton.textContent = 'Copied!';
+              setTimeout(() => {
+                copyApiKeyButton.textContent = originalText;
+              }, 2000);
+            })
+            .catch((err) => {
+              console.error('Failed to copy API key: ', err);
+            });
+        });
+      }
+
+      // Replace API key placeholder in code examples
+      if (apiKey) {
+        const codeElements = document.querySelectorAll('pre code');
+        codeElements.forEach((codeElement) => {
+          // Check if the code contains the placeholder
+          if (codeElement.textContent.includes('YOUR_API_KEY_HERE')) {
+            // Store original content for the copy button
+            const originalContent = codeElement.textContent;
+
+            // Replace placeholder with actual API key in the displayed text
+            const contentWithKey = originalContent.replace(
+              /YOUR_API_KEY_HERE/g,
+              apiKey
+            );
+            codeElement.textContent = contentWithKey;
+
+            // Find the parent pre and its copy button (if already created)
+            const preElement = codeElement.closest('pre');
+            if (preElement) {
+              const header = preElement.previousElementSibling;
+              if (header && header.classList.contains('code-header')) {
+                const copyButton = header.querySelector('.copy-button');
+                if (copyButton) {
+                  // Override the copy functionality to use the content with the real API key
+                  copyButton.addEventListener(
+                    'click',
+                    (e) => {
+                      e.stopPropagation(); // Prevent any other click handlers
+                      navigator.clipboard
+                        .writeText(contentWithKey)
+                        .then(() => {
+                          const originalButtonText = copyButton.textContent;
+                          copyButton.textContent = 'Copied!';
+                          setTimeout(() => {
+                            copyButton.textContent = originalButtonText;
+                          }, 2000);
+                        })
+                        .catch((err) => {
+                          console.error('Failed to copy code: ', err);
+                          copyButton.textContent = 'Failed to copy';
+                        });
+                    },
+                    true
+                  ); // Use capture to ensure this handler runs first
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Code block copy functionality
+      const codeBlocks = document.querySelectorAll('pre');
+
+      codeBlocks.forEach((codeBlock) => {
+        // Create header div
+        const header = document.createElement('div');
+        header.className = 'code-header';
+
+        // Create copy button
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-button';
+        copyButton.textContent = 'Copy';
+
+        // Add click event to copy button
+        copyButton.addEventListener('click', () => {
+          const code = codeBlock.querySelector('code');
+          if (code) {
+            navigator.clipboard
+              .writeText(code.textContent || '')
+              .then(() => {
+                // Indicate success
+                const originalText = copyButton.textContent;
+                copyButton.textContent = 'Copied!';
+
+                // Revert back after 2 seconds
+                setTimeout(() => {
+                  copyButton.textContent = originalText;
+                }, 2000);
+              })
+              .catch((err) => {
+                console.error('Failed to copy code: ', err);
+                copyButton.textContent = 'Failed to copy';
+              });
+          }
+        });
+
+        // Add button to header
+        header.appendChild(copyButton);
+
+        // Insert header before code block
+        if (codeBlock.parentNode) {
+          codeBlock.parentNode.insertBefore(header, codeBlock);
+        }
+      });
+    });
+  </script>
 </SiteLayout>

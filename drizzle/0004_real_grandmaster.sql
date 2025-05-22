@@ -1,1 +1,0 @@
-ALTER TABLE polls ADD `shortId` text NOT NULL;

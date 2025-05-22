@@ -11,21 +11,23 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { trpcReact } from '@/lib/trpc/client';
+import { queryClient, trpc } from '@/lib/trpcs';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const apiKeySchema = z.object({}); // As no fields are being validated, this is just a placeholder.
 
 export function SettingsForm() {
-  const utils = trpcReact.useUtils();
-  const { data } = trpcReact.api.get.useQuery();
-  const { mutate: rotateKey } = trpcReact.api.rotate.useMutation({
+  const { data } = useQuery(trpc.api.get.queryOptions());
+  const apiKeyQueryKey = trpc.api.get.queryKey();
+  const { mutate: rotateKey } = useMutation(trpc.api.rotate.mutationOptions({
     onMutate: () => {
-      utils.api.get.cancel();
+      queryClient.cancelQueries({queryKey: apiKeyQueryKey})
     },
     onSettled: () => {
-      utils.api.get.invalidate();
+      queryClient.invalidateQueries({queryKey: apiKeyQueryKey})
     }
-  });
+  }))
+
   const { handleSubmit } = useForm({
     resolver: zodResolver(apiKeySchema)
   });
@@ -43,7 +45,7 @@ export function SettingsForm() {
     }
   };
   return (
-    <div className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 max-w-lg mx-auto md:max-w-4xl lg:max-w-5xl">
+    <div className="flex min-h-[calc(100vh-(--spacing(16)))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 max-w-lg mx-auto md:max-w-4xl lg:max-w-5xl">
       <div className="grid gap-6">
         <Card>
           <CardHeader>

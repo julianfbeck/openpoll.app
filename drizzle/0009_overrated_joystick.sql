@@ -1,1 +1,0 @@
-ALTER TABLE polls ADD `votes` integer DEFAULT 0 NOT NULL;

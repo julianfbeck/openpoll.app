@@ -1,23 +1,21 @@
 ---
-import '@/styles/globals.css';
-
-import { getSession } from 'auth-astro/server';
 import { createCaller } from '@/lib/trpc/routers/_app';
 import type { Poll } from '@/models/types';
 import SiteLayout from '@/layouts/CardLayout.astro';
 import ModeratorFormWrapper from '@/components/ModeratorFormWrapper';
-import { redisClient } from '@/lib/redis';
+import { auth } from '@/lib/auth';
 
 const { id } = Astro.params;
 
 if (!id) {
   return Astro.redirect('/');
 }
-const session = await getSession(Astro.request);
+const session = await auth.api.getSession({
+  headers: Astro.request.headers
+});
 const caller = createCaller({
-  user: session,
+  user: session?.user,
   req: Astro.request,
-  redis: redisClient,
   resHeaders: Astro.response.headers
 });
 const poll = (await caller.poll.get(id)) as Poll;
