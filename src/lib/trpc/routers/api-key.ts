@@ -1,6 +1,5 @@
 import { authenticatedProcedure, router } from '../root';
-import { users } from '@/models/schema';
-import { db } from '@/utils/db';
+import { db, user } from '@/utils/db';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 
@@ -10,11 +9,11 @@ export const apiKeyRouter = router({
       if (!ctx.user) {
         return null;
       }
-      const userID = ctx.user.user!.id;
-      const user = await tx.query.users.findFirst({
-        where: eq(users.id, userID)
+      const userID = ctx.user.id;
+      const foundUser = await tx.query.user.findFirst({
+        where: eq(user.id, userID)
       });
-      return user?.api_key ?? '';
+      return foundUser?.api_key ?? '';
     });
     return { apiKey };
   }),
@@ -22,10 +21,10 @@ export const apiKeyRouter = router({
     if (!ctx.user) {
       return;
     }
-    const userID = ctx.user.user!.id;
+    const userID = ctx.user.id;
     await db
-      .update(users)
+      .update(user)
       .set({ api_key: `op_${nanoid(15)}` })
-      .where(eq(users.id, userID));
+      .where(eq(user.id, userID));
   })
 });

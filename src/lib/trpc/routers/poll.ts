@@ -82,10 +82,10 @@ export const pollRouter = router({
         });
 
         // trigger event emitter
-        ctx.redis.publish(
-          `update:${input.shortId}`,
-          JSON.stringify({ update: true })
-        );
+        // ctx.redis.publish(
+        //   `update:${input.shortId}`,
+        //   JSON.stringify({ update: true })
+        // );
       });
     }),
   selectCurrentPollOption: authenticatedProcedure
@@ -115,10 +115,10 @@ export const pollRouter = router({
         })
         .where(eq(polls.id, poll.id));
 
-      ctx.redis.publish(
-        `update:${input.shortId}`,
-        JSON.stringify({ update: true })
-      );
+      // ctx.redis.publish(
+      //   `update:${input.shortId}`,
+      //   JSON.stringify({ update: true })
+      // );
     }),
 
   deletePollOption: authenticatedProcedure
@@ -142,10 +142,10 @@ export const pollRouter = router({
       }
 
       await db.delete(pollOptions).where(eq(pollOptions.id, input.optionId));
-      ctx.redis.publish(
-        `update:${input.shortId}`,
-        JSON.stringify({ update: true })
-      );
+      // ctx.redis.publish(
+      //   `update:${input.shortId}`,
+      //   JSON.stringify({ update: true })
+      // );
     }),
 
   editPollOption: authenticatedProcedure
@@ -175,9 +175,9 @@ export const pollRouter = router({
           option: input.optionText
         })
         .where(eq(pollOptions.id, input.optionId));
-      ctx.redis.publish(
-        `update:${input.shortId}`,
-        JSON.stringify({ update: true })
-      );
+      // ctx.redis.publish(
+      //   `update:${input.shortId}`,
+      //   JSON.stringify({ update: true })
+      // );
     })
 });

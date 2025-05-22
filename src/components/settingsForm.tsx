@@ -11,21 +11,23 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { trpc } from '@/lib/trpc/client';
+import { queryClient, trpc } from '@/lib/trpcs';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const apiKeySchema = z.object({}); // As no fields are being validated, this is just a placeholder.
 
 export function SettingsForm() {
-  const utils = trpc.useUtils();
-  const { data } = trpc.api.get.useQuery();
-  const { mutate: rotateKey } = trpc.api.rotate.useMutation({
+  const { data } = useQuery(trpc.api.get.queryOptions());
+  const apiKeyQueryKey = trpc.api.get.queryKey();
+  const { mutate: rotateKey } = useMutation(trpc.api.rotate.mutationOptions({
     onMutate: () => {
-      utils.api.get.cancel();
+      queryClient.cancelQueries({queryKey: apiKeyQueryKey})
     },
     onSettled: () => {
-      utils.api.get.invalidate();
+      queryClient.invalidateQueries({queryKey: apiKeyQueryKey})
     }
-  });
+  }))
+
   const { handleSubmit } = useForm({
     resolver: zodResolver(apiKeySchema)
   });

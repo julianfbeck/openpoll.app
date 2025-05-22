@@ -16,6 +16,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useVotedPolls } from './useVotedPolls';
 import usePollViewTracker from './useTrackView';
 import { parseMarkdownLinks } from '@/utils/links';
+import { trpc } from '@/lib/trpcs';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 const FormSchema = z.object({
   votes: z.array(z.number()).refine((value) => value.some((item) => item), {
@@ -26,14 +29,18 @@ const FormSchema = z.object({
 export function VoteForm({ poll: poll }: { poll: Poll }) {
   usePollViewTracker(poll.shortId);
   const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
-  const { data: pollData, isLoading } = trpc.poll.get.useQuery(
-    poll.shortId,
-    {
+  const { data: pollData, isLoading } = useQuery(
+    trpc.poll.get.queryOptions(poll.shortId, {
       initialData: poll
-    }
+    })
   );
-  const vote = trpc.poll.vote.useMutation();
-
+  const vote = useMutation(trpc.poll.vote.mutationOptions({
+    onSuccess: () => {
+      pollData && markPollAsVoted();
+      window.location.href = `/poll/${poll.shortId}`;
+      toast.success('Your vote has been submitted.');
+    }
+  }));
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -52,14 +59,8 @@ export function VoteForm({ poll: poll }: { poll: Poll }) {
         shortId: poll.shortId,
         optionIds: data.votes
       });
-      pollData && markPollAsVoted();
-      window.location.href = `/poll/${poll.shortId}`;
     } catch (error) {
-      toast({
-        title: 'Error voting',
-        description: 'An error occurred while voting.',
-        variant: 'destructive'
-      });
+      toast.error('An error occurred while voting.');
     }
   }
   if (isLoading) return <div>Loading...</div>;
