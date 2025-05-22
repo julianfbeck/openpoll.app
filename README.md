@@ -17,6 +17,7 @@ OpenPoll is build on top of Astro. It uses the following technologies to create 
 - [Astro](https://astro.build/) as the main framework.
 - [React](https://reactjs.org/) for the dynamic parts of the website. 
 - TRPC for the API. Trpc is a framework that allows you to create a type-safe API. In OpenPoll TRPC APIs get called from Astro componentens on the server side and from react components on the client side.
+- [better-auth](https://github.com/pilcrowOnPaper/better-auth) for authentication - A lightweight, framework-agnostic auth library.
 - shadcn/ui - Beautifully designed components built with Radix UI and Tailwind CSS.
 - [Tailwind CSS](https://tailwindcss.com/) for styling.
 - Drizzle as the DB-ORM
