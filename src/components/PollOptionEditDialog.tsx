@@ -20,9 +20,10 @@ import {
   FormLabel
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
-import { trpcReact } from '@/lib/trpc/client';
+import { toast } from 'sonner';
 import type { Poll, PollOption } from '@/models/types';
+import { queryClient, trpc } from '@/lib/trpcs';
+import { useMutation } from '@tanstack/react-query';
 
 const editOptionSchema = z.object({
   optionText: z.string().min(1, 'Option text must not be empty.')
@@ -39,7 +40,14 @@ export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
   option,
   onClose
 }) => {
-  const updateOptionMutation = trpcReact.poll.editPollOption.useMutation();
+  const updateOptionMutation = useMutation(trpc.poll.editPollOption.mutationOptions({
+    onMutate: () => {
+      queryClient.cancelQueries({ queryKey: trpc.poll.get.queryKey(poll.shortId) });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: trpc.poll.get.queryKey(poll.shortId) });
+    }
+  }))
   const form = useForm<z.infer<typeof editOptionSchema>>({
     resolver: zodResolver(editOptionSchema),
     defaultValues: {
@@ -49,20 +57,19 @@ export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
 
   const onSubmit = async (data: { optionText: string }) => {
     try {
+      console.log('Updating option', data);
       await updateOptionMutation.mutateAsync({
         shortId: poll.shortId,
         optionId: option.id,
         optionText: data.optionText
       });
-      toast({
-        title: 'Option updated successfully',
+      toast.success('Option updated successfully', {
         description: 'The poll option has been updated.'
       });
       onClose();
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Error updating option',
+      toast.error('Error updating option', {
         description: 'An error occurred while updating the poll option.'
       });
     }
