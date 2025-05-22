@@ -30,3 +30,4 @@ litestream
 *.sqlite3-shm
 *.sqlite3-wal
 .db.sqlite3-litestream
+.devs.vars

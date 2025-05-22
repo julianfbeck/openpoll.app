@@ -1,4 +1,3 @@
-import { redisClient } from '@/lib/redis';
 import { pollOptions, polls, user } from '@/models/schema';
 import type { PollOptionCreate } from '@/models/types';
 import { db } from '@/utils/db';
@@ -29,18 +28,18 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Rate limit using redis
-    const limit = 10;
-    const key = `rate-limit-api:${auth}`;
-    const current = await redisClient.incr(key);
+    // const limit = 10;
+    // const key = `rate-limit-api:${auth}`;
+    // const current = await redisClient.incr(key);
 
-    if (current > limit) {
-      await redisClient.expire(key, 3600);
-      return new Response('Too many requests', { status: 429 });
-    }
+    // if (current > limit) {
+    //   await redisClient.expire(key, 3600);
+    //   return new Response('Too many requests', { status: 429 });
+    // }
 
-    if (current === 1) {
-      await redisClient.expire(key, 3600);
-    }
+    // if (current === 1) {
+    //   await redisClient.expire(key, 3600);
+    // }
 
     const body = await request.json();
     const input = createInput.parse(body);
