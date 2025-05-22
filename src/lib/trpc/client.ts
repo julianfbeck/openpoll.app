@@ -11,15 +11,6 @@ const trpcAstro = createTRPCProxyClient<AppRouter>({
     })
   ]
 });
-// export const trpc = createTRPCReact<AppRouter>();
 
-export const queryClient = new QueryClient();
-const trpcClient = createTRPCClient<AppRouter>({
-  links: [httpBatchLink({ url: 'http://localhost:2022' })],
-});
-export const trpc = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
-});
 
 export { trpcAstro };

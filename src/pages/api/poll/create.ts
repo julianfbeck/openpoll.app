@@ -15,6 +15,7 @@ const createInput = z.object({
 export type CreateInput = z.infer<typeof createInput>;
 
 export const POST: APIRoute = async ({ request }) => {
+  console.log('Creating poll');
   try {
     // Get auth header from request
     const authHeader = request.headers.get('Authorization');

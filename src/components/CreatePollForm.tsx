@@ -13,9 +13,9 @@ import {
   FormLabel,
   FormMessage
 } from './ui/form';
-import { useTRPC } from './CreatePollFormWrapper';
+import { trpc } from '@/lib/trpcs';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-// Define your form schema using zod
 const pollFormSchema = z.object({
   eventName: z.string().min(1, { message: 'Please name your Event' }),
   question: z.string().min(1, { message: 'Please enter a poll question.' }),
@@ -29,8 +29,20 @@ const pollFormSchema = z.object({
 type PollFormValues = z.infer<typeof pollFormSchema>;
 
 export function CreatePollForm() {
-  const trpc = useTRPC();
-  const createPoll = trpc.poll.create.mutationKey();
+  // Using the new TanStack React Query approach
+  const createPollMutation = useMutation(
+    trpc.poll.create.mutationOptions({
+      onSuccess: (shortId) => {
+        if (shortId) {
+          window.location.href = `/poll/${shortId}`;
+        }
+      },
+      onError: (error) => {
+        console.error('Error creating poll:', error);
+      }
+    })
+  );
+
 
   const form = useForm<PollFormValues>({
     resolver: zodResolver(pollFormSchema),
@@ -47,14 +59,13 @@ export function CreatePollForm() {
   });
 
   async function onSubmit(data: PollFormValues) {
-    const shortId = await createPoll.mutateAsync({
+    // Using the new mutation approach
+    createPollMutation.mutate({
       eventName: data.eventName,
       question: data.question,
       options: data.options.map((option) => option.label)
     });
-    if (shortId) {
-      window.location.href = `/poll/${shortId}`;
-    }
+
   }
 
   return (
@@ -112,8 +123,9 @@ export function CreatePollForm() {
                       variant="destructive"
                       size="sm"
                       onClick={() => remove(index)}
+                      type="button"
                     >
-                      <Trash2 className="ß" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                   <FormMessage />
@@ -127,12 +139,18 @@ export function CreatePollForm() {
               variant="outline"
               size="sm"
               onClick={() => append({ label: '' })}
+              type="button"
             >
               + Add Option
             </Button>
 
             {/* Submit button */}
-            <Button type="submit">Create Poll</Button>
+            <Button 
+              type="submit"
+              disabled={createPollMutation.isPending}
+            >
+              {createPollMutation.isPending ? 'Creating...' : 'Create Poll'}
+            </Button>
           </div>
         </form>
       </Form>

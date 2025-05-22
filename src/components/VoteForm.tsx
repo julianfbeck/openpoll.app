@@ -10,13 +10,11 @@ import {
   FormLabel,
   FormMessage
 } from './ui/form';
-import { trpcReact } from '@/lib/trpc/client';
 import type { Poll } from '@/models/types';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useVotedPolls } from './useVotedPolls';
 import usePollViewTracker from './useTrackView';
-import { toast } from './ui/use-toast';
 import { parseMarkdownLinks } from '@/utils/links';
 
 const FormSchema = z.object({
@@ -26,15 +24,15 @@ const FormSchema = z.object({
 });
 
 export function VoteForm({ poll: poll }: { poll: Poll }) {
-  const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
   usePollViewTracker(poll.shortId);
-  const { data: pollData, isLoading } = trpcReact.poll.get.useQuery(
+  const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
+  const { data: pollData, isLoading } = trpc.poll.get.useQuery(
     poll.shortId,
     {
       initialData: poll
     }
   );
-  const vote = trpcReact.poll.vote.useMutation();
+  const vote = trpc.poll.vote.useMutation();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),

@@ -2,7 +2,6 @@ import { z } from 'zod';
 import {
   authenticatedProcedure,
   publicProcedure,
-  rateLimitedAuthenticatedProcedure,
   router
 } from '../root';
 import { pollOptions, polls } from '@/models/schema';
@@ -11,7 +10,7 @@ import type { PollOptionCreate } from '@/models/types';
 import { eq, sql } from 'drizzle-orm';
 
 export const pollRouter = router({
-  create: rateLimitedAuthenticatedProcedure
+  create: authenticatedProcedure
     .input(
       z.object({
         eventName: z.string().min(1).max(200),
@@ -24,7 +23,7 @@ export const pollRouter = router({
         const poll = await tx.insert(polls).values({
           event: input.eventName,
           question: input.question,
-          creatorId: ctx.user.user!.id
+          creatorId: ctx.user.id
         });
 
         const lastInsertRowid = Number(poll.lastInsertRowid);
@@ -105,7 +104,7 @@ export const pollRouter = router({
         throw new Error('Poll not found');
       }
 
-      if (poll.creatorId !== ctx.user.user!.id) {
+      if (poll.creatorId !== ctx.user.id) {
         throw new Error('You are not the creator of this poll');
       }
 
@@ -138,7 +137,7 @@ export const pollRouter = router({
         throw new Error('Poll not found');
       }
 
-      if (poll.creatorId !== ctx.user.user!.id) {
+      if (poll.creatorId !== ctx.user.id) {
         throw new Error('You are not the creator of this poll');
       }
 
@@ -166,7 +165,7 @@ export const pollRouter = router({
         throw new Error('Poll not found');
       }
 
-      if (poll.creatorId !== ctx.user.user!.id) {
+      if (poll.creatorId !== ctx.user.id) {
         throw new Error('You are not the creator of this poll');
       }
 
