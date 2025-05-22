@@ -5,24 +5,25 @@ title: Documentation
 titleStart: API
 ---
 
-## API Documentation
-OpenPoll features a simple RESTful API that allows clients to interact with the platform programmatically. 
-You are able to create and get polls using the API. To use the api you need to have an API key. The api can be generated in the settings page.
+# API Documentation
 
-### Endpoint: Create Poll
+OpenPoll features a simple RESTful API that allows clients to interact with the platform programmatically. 
+You are able to create and get polls using the API. To use the API you need to have an API key. The API key can be generated in the settings page.
+
+## Endpoint: Create Poll
 
 This endpoint allows clients to create a new poll. Clients must be authorized to use this endpoint.
 
-#### HTTP Method
+### HTTP Method
 `POST`
 
-#### Endpoint
+### Endpoint
 `/api/poll/create`
 
-#### Headers
+### Headers
 - `Authorization`: A valid API key to authenticate the request.
 
-#### Request Body
+### Request Body
 The request body must be a JSON object that contains the following properties:
 - `question`: A string representing the poll question.
 - `options`: An array of strings representing the poll options.
@@ -46,7 +47,7 @@ The request body must be a JSON object that contains the following properties:
 }
 ```
 
-#### Successful Response
+### Successful Response
 A successful response returns HTTP status 200 along with the poll details in JSON format, including a unique URL for accessing the poll and an API URL for further interactions.
 
 ```json
@@ -80,14 +81,14 @@ A successful response returns HTTP status 200 along with the poll details in JSO
 }
 ```
 
-#### Error Responses
+### Error Responses
 - **401 Unauthorized**: Returned if the `Authorization` header is missing or the API key is invalid.
 - **429 Too Many Requests**: Returned if the request rate limit is exceeded. The rate limit is 10 requests per hour per API key.
 
-#### Rate Limiting
+### Rate Limiting
 Rate limiting is enforced using a Redis key based on the `Authorization` header. If the number of requests exceeds the limit within an hour, subsequent requests will receive a 429 status code. The limit resets after one hour.
 
-#### Example
+### Example
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_API_KEY_HERE" \
@@ -110,25 +111,26 @@ curl -X POST \
   }' \
   https://openpoll.app/api/poll/create
 ```
+
 ---
 
-### Endpoint: Get Poll Details
+## Endpoint: Get Poll Details
 
 This endpoint allows clients to retrieve details about a specific poll. Clients must be authorized and have the appropriate privileges to access the poll data.
 
-#### HTTP Method
+### HTTP Method
 `GET`
 
-#### Endpoint
+### Endpoint
 `/api/poll/{pollId}`
 
-#### URL Parameters
+### URL Parameters
 - `pollId`: The unique identifier for the poll. Also called the `shortId`.
 
-#### Headers
+### Headers
 - `Authorization`: A valid API key to authenticate the request.
 
-#### Successful Response
+### Successful Response
 A successful response returns HTTP status 200 along with the poll details in JSON format.
 
 ```json
@@ -161,12 +163,12 @@ A successful response returns HTTP status 200 along with the poll details in JSO
 }
 ```
 
-#### Error Responses
+### Error Responses
 - **401 Unauthorized**: Returned if the `Authorization` header is missing or the API key is invalid.
 - **404 Not Found**: Returned if no poll matches the given `pollId`.
 - **403 Forbidden**: Returned if the authenticated user does not have permission to access the specified poll details.
 
-#### Example
+### Example
 ```bash
 curl -X GET \
   -H "Authorization: Bearer YOUR_API_KEY_HERE" \
