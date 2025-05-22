@@ -40,6 +40,8 @@ export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
   option,
   onClose
 }) => {
+  const [open, setOpen] = React.useState(false);
+  
   const updateOptionMutation = useMutation(trpc.poll.editPollOption.mutationOptions({
     onMutate: () => {
       queryClient.cancelQueries({ queryKey: trpc.poll.get.queryKey(poll.shortId) });
@@ -66,6 +68,7 @@ export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
       toast.success('Option updated successfully', {
         description: 'The poll option has been updated.'
       });
+      setOpen(false);
       onClose();
     } catch (error) {
       console.error(error);
@@ -76,9 +79,9 @@ export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild className="ml-2">
-        <Button variant="outline">Edit</Button>
+        <Button variant="outline" onClick={() => setOpen(true)}>Edit</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -98,9 +101,12 @@ export const PollOptionEditDialog: React.FC<PollOptionEditDialogProps> = ({
                 </FormItem>
               )}
             />
-            <DialogClose asChild className="mt-3">
+            <div className="flex justify-between mt-4">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
               <Button type="submit">Save Changes</Button>
-            </DialogClose>
+            </div>
           </form>
         </Form>
       </DialogContent>
