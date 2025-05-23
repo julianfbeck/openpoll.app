@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "source .devs.vars && astro dev",
     "start": "astro dev",
     "build": "astro build",
     "build:check": "astro check && astro build",

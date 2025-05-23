@@ -4,7 +4,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL!,
+  baseURL: import.meta.env.BETTER_AUTH_URL!,
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema: {
@@ -16,8 +16,8 @@ export const auth = betterAuth({
   }),
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!
+      clientId: import.meta.env.GITHUB_CLIENT_ID!,
+      clientSecret: import.meta.env.GITHUB_CLIENT_SECRET!
     }
   },
   plugins: [],

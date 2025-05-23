@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import cloudflare from '@astrojs/cloudflare';
@@ -14,6 +14,16 @@ export default defineConfig({
   adapter: cloudflare({
     platformProxy: true
   }),
+  env: {
+    schema: {
+      BETTER_AUTH_URL: envField.string({ context: "server", access: "secret" }),
+      TURSO_URL: envField.string({ context: "server", access: "secret" }),
+      TURSO_AUTH_TOKEN: envField.string({ context: "server", access: "secret" }), 
+      GITHUB_CLIENT_ID: envField.string({ context: "server", access: "secret" }),
+      GITHUB_CLIENT_SECRET: envField.string({ context: "server", access: "secret" }),
+      PUBLIC_TRPC_URL: envField.string({ context: "server", access: "secret" }),
+    }
+  },
   markdown: {
     shikiConfig: {
       themes: {
