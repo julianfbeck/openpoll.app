@@ -10,15 +10,15 @@
 		"nodejs_compat"
 	],
 	"pages_build_output_dir": "./dist",
-	// "durable_objects": {
-	// 	"bindings": [
-	// 		{
-	// 			"name": "COUNTER_DO",
-	// 			"class_name": "Counter",
-	// 			"script_name": "counter"
-	// 		}
-	// 	]
-	// },
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "POLL_HUB",
+				"class_name": "PollHub",
+				"script_name": "openpoll-do"
+			}
+		]
+	},
 	"observability": {
 		"enabled": true
 	}

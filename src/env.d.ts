@@ -9,6 +9,7 @@ type ENV = {
   PUBLIC_TRPC_URL: string;
   TURSO_URL: string;
   TURSO_AUTH_TOKEN: string;
+  POLL_HUB: DurableObjectNamespace;
 };
 
 

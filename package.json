@@ -10,7 +10,7 @@
     "dev-replicate": "source .env && litestream replicate -config litestream.private.yml -exec 'astro dev'",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "astro build && wrangler pages deploy",
+    "deploy": "astro build && wrangler pages deploy && wrangler pages deployment tail --project-name openpoll",
     "only-deploy": "wrangler pages deploy",
     "generate": "drizzle-kit generate:sqlite"
   },
