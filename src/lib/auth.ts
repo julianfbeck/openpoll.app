@@ -4,7 +4,8 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 
 export const auth = betterAuth({
-  baseURL: import.meta.env.BETTER_AUTH_URL!,
+  HERE I NEED TO UPDATE HTE LOCAL DEVELOPMENT _ CURRENTLS ITS BUGGY 
+  baseURL: "https://openpoll.pages.dev/",
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema: {
