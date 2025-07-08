@@ -1,0 +1,9 @@
+---
+import GithubLogin from '../components/GithubLogin';
+import FullPageLayout from '@/layouts/FullPageLayout.astro';
+---
+<FullPageLayout currentPage="signin" title="Sign In">
+  <div class="flex justify-center py-16">
+    <GithubLogin client:only="react" />
+  </div>
+</FullPageLayout>

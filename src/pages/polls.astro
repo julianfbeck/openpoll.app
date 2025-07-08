@@ -11,7 +11,7 @@ const session = await auth.api.getSession({
   headers: Astro.request.headers
 });
 
-if (!session?.user) return Astro.redirect('/api/auth/signin');
+if (!session?.user) return Astro.redirect('/signin');
 const user = session.user as User;
 
 const userPolls = await db.query.polls.findMany({

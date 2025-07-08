@@ -18,9 +18,9 @@ const usePollViewTracker = (pollId: string) => {
     let viewedPollsArray = viewedPolls ? JSON.parse(viewedPolls) : [];
 
     if (!viewedPollsArray.includes(pollId)) {
-
       viewedPollsArray.push(pollId);
       localStorage.setItem('viewedPolls', JSON.stringify(viewedPollsArray));
+      mutate(pollId);
     }
   }, [pollId, mutate]);
 };
