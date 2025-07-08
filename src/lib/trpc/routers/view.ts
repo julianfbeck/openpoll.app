@@ -3,7 +3,6 @@ import { publicProcedure, router } from '../root';
 import { polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import { eq, sql } from 'drizzle-orm';
-import Redis from 'ioredis';
 
 export const viewRouter = router({
   view: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
@@ -18,9 +17,12 @@ export const viewRouter = router({
         })
         .where(eq(polls.id, poll!.id));
     });
-    // trigger event emitter
-    const redis = new Redis();
-    await redis.publish(`update:${input}`, JSON.stringify({ update: true }));
+    // trigger event emitter via Durable Object
+    if (ctx.env?.POLL_HUB) {
+      const id = ctx.env.POLL_HUB.idFromName(input);
+      const pollHub = ctx.env.POLL_HUB.get(id);
+      await pollHub.fetch(new Request('https://dummy.com/broadcast'));
+    }
     return { shortId };
   })
 });
