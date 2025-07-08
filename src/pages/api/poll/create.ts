@@ -54,25 +54,21 @@ export const POST: APIRoute = async ({ request }) => {
       }
 
       // Insert poll first
-      const [newPoll] = await tx
-        .insert(polls)
-        .values({
-          event: input.name,
-          question: input.question,
-          creatorId: u.id
-        })
-        .returning({
-          id: polls.id,
-          shortId: polls.shortId
-        });
+      const pollInsert = await tx.insert(polls).values({
+        event: input.name,
+        question: input.question,
+        creatorId: u.id
+      });
 
-      if (!newPoll) {
+      const pollId = Number(pollInsert.lastInsertRowid);
+
+      if (!pollId) {
         return new Response('Failed to create poll', { status: 500 });
       }
 
       // Insert options
       const options = input.options.map((option) => ({
-        pollId: newPoll.id,
+        pollId,
         option,
         votes: 0
       })) as PollOptionCreate[];
@@ -81,7 +77,7 @@ export const POST: APIRoute = async ({ request }) => {
 
       // Fetch the complete poll with options
       const fullPoll = await tx.query.polls.findFirst({
-        where: eq(polls.id, newPoll.id),
+        where: eq(polls.id, pollId),
         with: {
           options: true
         }
@@ -92,6 +88,8 @@ export const POST: APIRoute = async ({ request }) => {
       }
 
       const fullPollWithUrl = {
+        id: fullPoll.id,
+        shortId: fullPoll.shortId,
         ...fullPoll,
         url: `https://openpoll.app/${fullPoll.shortId}`,
         api_url: `https://openpoll.app/api/poll/${fullPoll.shortId}`
