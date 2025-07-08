@@ -56,7 +56,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.4",
     "satori": "^0.12.1",
-    "onner": "^2.0.3",
+    "sonner": "^2.0.6",
     "tailwind": "^4.0.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
