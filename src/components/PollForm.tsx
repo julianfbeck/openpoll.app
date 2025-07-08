@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Poll, PollOption } from '@/models/types';
 import { useVotedPolls } from './useVotedPolls';
 import { Button } from './ui/button';
@@ -17,6 +17,7 @@ export function PollForm({
   user: User | undefined;
 }) {
   const { markPollAsVoted, hasVotedOnPoll } = useVotedPolls(poll.shortId);
+  const wsRef = useRef<WebSocket | null>(null);
 
   usePollViewTracker(poll.shortId);
 
@@ -25,26 +26,64 @@ export function PollForm({
     refetchInterval: 10000
   }));
 
-  // useEffect(() => {
-  //   const source = new EventSource(`/api/live/${poll.shortId}`);
+  useEffect(() => {
+    // Connect to WebSocket for real-time updates
+    const connectWebSocket = () => {
+      try {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/api/live/${poll.shortId}`;
+        
+        console.log('Connecting to WebSocket:', wsUrl);
+        wsRef.current = new WebSocket(wsUrl);
 
-  //   source.addEventListener('open', () => {
-  //     console.log('SSE opened!');
-  //   });
+        wsRef.current.onopen = () => {
+          console.log('WebSocket connected for poll:', poll.shortId);
+        };
 
-  //   source.addEventListener('message', (e) => {
-  //     console.log('Message: ', e);
-  //     refetch();
-  //   });
+        wsRef.current.onmessage = (event) => {
+          console.log('WebSocket message received:', event.data);
+          try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'poll_update') {
+              console.log('Poll update received, refetching data...');
+              refetch();
+            }
+          } catch (error) {
+            console.log('Non-JSON message received, refetching data...');
+            refetch();
+          }
+        };
 
-  //   source.addEventListener('error', (e) => {
-  //     console.error('Error: ', e);
-  //   });
+        wsRef.current.onclose = (event) => {
+          console.log('WebSocket closed:', event.code, event.reason);
+          // Attempt to reconnect after a delay
+          setTimeout(() => {
+            if (wsRef.current?.readyState === WebSocket.CLOSED) {
+              console.log('Attempting to reconnect WebSocket...');
+              connectWebSocket();
+            }
+          }, 5000);
+        };
 
-  //   return () => {
-  //     source.close();
-  //   };
-  // }, []);
+        wsRef.current.onerror = (error) => {
+          console.error('WebSocket error:', error);
+        };
+      } catch (error) {
+        console.error('Failed to connect WebSocket:', error);
+      }
+    };
+
+    connectWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      if (wsRef.current) {
+        console.log('Closing WebSocket connection');
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+    };
+  }, [poll.shortId, refetch]);
 
   const HasVotedButton = ({ hasVotedOnPoll }: { hasVotedOnPoll: boolean }) => {
     if (hasVotedOnPoll) {
@@ -165,8 +204,6 @@ export function PollForm({
     </div>
   );
 }
-
-
 
 function PollOptions({
   options,

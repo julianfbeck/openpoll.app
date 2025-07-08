@@ -1,0 +1,362 @@
+---
+// No server-side logic needed for this test page
+---
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Durable Object WebSocket Test</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+            .container {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .status {
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            .connected {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+            .disconnected {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+            .messages {
+                border: 1px solid #ddd;
+                height: 300px;
+                overflow-y: auto;
+                padding: 10px;
+                margin: 10px 0;
+                background-color: #f9f9f9;
+                font-family: monospace;
+                font-size: 12px;
+            }
+            button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+                margin: 5px;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            button:disabled {
+                background-color: #6c757d;
+                cursor: not-allowed;
+            }
+            input {
+                padding: 8px;
+                margin: 5px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            .api-test {
+                border-top: 2px solid #ddd;
+                margin-top: 20px;
+                padding-top: 20px;
+            }
+            .section {
+                margin: 20px 0;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Durable Object Test Interface</h1>
+
+            <div class="section">
+                <h3>Basic API Tests</h3>
+                <p>
+                    These tests directly call your Durable Object via the API
+                    endpoints.
+                </p>
+
+                <div>
+                    <label for="pollId">Poll ID:</label>
+                    <input
+                        type="text"
+                        id="pollId"
+                        value="test-poll-123"
+                        placeholder="Enter poll ID"
+                    />
+                </div>
+
+                <div style="margin: 10px 0;">
+                    <button id="testInfoBtn">Test Info</button>
+                    <button id="testBroadcastBtn">Test Broadcast</button>
+                    <button id="testWebSocketBtn">Test WebSocket Upgrade</button
+                    >
+                </div>
+
+                <div>
+                    <input
+                        type="text"
+                        id="customMessage"
+                        placeholder="Custom message"
+                        value="Hello from test!"
+                    />
+                    <button id="sendCustomBtn">Send Custom Broadcast</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>API Response:</h3>
+                <pre
+                    id="apiResponse"
+                    style="background: #f8f9fa; padding: 10px; min-height: 100px; border: 1px solid #ddd;">
+                </pre>
+            </div>
+
+            <div class="section">
+                <h3>Test Log:</h3>
+                <div class="messages" id="messages"></div>
+                <button id="clearLogBtn">Clear Log</button>
+            </div>
+
+            <div class="section">
+                <h3>Quick Tests</h3>
+                <p>Run these to verify your setup:</p>
+                <ol>
+                    <li>
+                        <strong>Test Info:</strong> Verify the Durable Object binding
+                        works
+                    </li>
+                    <li>
+                        <strong>Test Broadcast:</strong> Check if broadcasting to
+                        WebSockets works
+                    </li>
+                    <li>
+                        <strong>Send Custom Broadcast:</strong> Test custom message
+                        broadcasting
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    // Global variables
+    let messageCount = 0;
+
+    // Type definitions for better error handling
+    interface ApiResponse {
+        success: boolean;
+        action?: string;
+        error?: string;
+        [key: string]: any;
+    }
+
+    function addMessage(message: string, type: string = 'info'): void {
+        const messages = document.getElementById('messages');
+        if (!messages) return;
+
+        const timestamp = new Date().toLocaleTimeString();
+        const div = document.createElement('div');
+        div.innerHTML = `<span style="color: #666;">[${timestamp}]</span> <span style="color: ${getTypeColor(type)};">[${type.toUpperCase()}]</span> ${message}`;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function getTypeColor(type: string): string {
+        switch (type) {
+            case 'error':
+                return '#dc3545';
+            case 'success':
+                return '#28a745';
+            case 'warning':
+                return '#ffc107';
+            case 'info':
+                return '#17a2b8';
+            default:
+                return '#6c757d';
+        }
+    }
+
+    function clearLog(): void {
+        const messages = document.getElementById('messages');
+        if (messages) {
+            messages.innerHTML = '';
+        }
+        messageCount = 0;
+        addMessage('Log cleared', 'info');
+    }
+
+    async function makeApiCall(
+        url: string,
+        options: RequestInit = {}
+    ): Promise<ApiResponse> {
+        try {
+            addMessage(`Making API call: ${url}`, 'info');
+            const response = await fetch(url, options);
+            const data = (await response.json()) as ApiResponse;
+
+            const apiResponseEl = document.getElementById('apiResponse');
+            if (apiResponseEl) {
+                apiResponseEl.textContent = JSON.stringify(data, null, 2);
+            }
+
+            if (data.success) {
+                addMessage(
+                    `API call successful: ${data.action || 'unknown'}`,
+                    'success'
+                );
+            } else {
+                addMessage(
+                    `API call returned error: ${data.error || 'unknown error'}`,
+                    'error'
+                );
+            }
+
+            return data;
+        } catch (error) {
+            const errorMsg = `API call failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
+            const apiResponseEl = document.getElementById('apiResponse');
+            if (apiResponseEl) {
+                apiResponseEl.textContent = errorMsg;
+            }
+            addMessage(errorMsg, 'error');
+            throw error;
+        }
+    }
+
+    async function testInfo(): Promise<void> {
+        const pollIdEl = document.getElementById('pollId') as HTMLInputElement;
+        const pollId = pollIdEl?.value || 'test-poll-123';
+        try {
+            await makeApiCall(
+                `/api/test-do?action=info&pollId=${encodeURIComponent(pollId)}`
+            );
+        } catch (error) {
+            console.error('testInfo failed:', error);
+        }
+    }
+
+    async function testBroadcast(): Promise<void> {
+        const pollIdEl = document.getElementById('pollId') as HTMLInputElement;
+        const pollId = pollIdEl?.value || 'test-poll-123';
+        try {
+            await makeApiCall(
+                `/api/test-do?action=broadcast&pollId=${encodeURIComponent(pollId)}`
+            );
+        } catch (error) {
+            console.error('testBroadcast failed:', error);
+        }
+    }
+
+    async function testWebSocketUpgrade(): Promise<void> {
+        const pollIdEl = document.getElementById('pollId') as HTMLInputElement;
+        const pollId = pollIdEl?.value || 'test-poll-123';
+        try {
+            await makeApiCall(
+                `/api/test-do?action=websocket&pollId=${encodeURIComponent(pollId)}`
+            );
+        } catch (error) {
+            console.error('testWebSocketUpgrade failed:', error);
+        }
+    }
+
+    async function sendCustomBroadcast(): Promise<void> {
+        const pollIdEl = document.getElementById('pollId') as HTMLInputElement;
+        const messageEl = document.getElementById(
+            'customMessage'
+        ) as HTMLInputElement;
+
+        const pollId = pollIdEl?.value || 'test-poll-123';
+        const message = messageEl?.value || 'Hello from test!';
+
+        try {
+            await makeApiCall('/api/test-do', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    pollId: pollId,
+                    message: message
+                })
+            });
+        } catch (error) {
+            console.error('sendCustomBroadcast failed:', error);
+        }
+    }
+
+    // Test connection to API on page load
+    async function testConnection(): Promise<void> {
+        addMessage('Testing API connection...', 'info');
+        try {
+            const response = await fetch(
+                '/api/test-do?action=info&pollId=connection-test'
+            );
+            if (response.ok) {
+                addMessage('✅ API connection successful', 'success');
+            } else {
+                addMessage(
+                    `⚠️ API connection failed: ${response.status} ${response.statusText}`,
+                    'warning'
+                );
+            }
+        } catch (error) {
+            addMessage(
+                `❌ API connection error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                'error'
+            );
+        }
+    }
+
+    // Setup event listeners when DOM is ready
+    function setupEventListeners(): void {
+        const testInfoBtn = document.getElementById('testInfoBtn');
+        const testBroadcastBtn = document.getElementById('testBroadcastBtn');
+        const testWebSocketBtn = document.getElementById('testWebSocketBtn');
+        const sendCustomBtn = document.getElementById('sendCustomBtn');
+        const clearLogBtn = document.getElementById('clearLogBtn');
+
+        if (testInfoBtn) testInfoBtn.addEventListener('click', testInfo);
+        if (testBroadcastBtn)
+            testBroadcastBtn.addEventListener('click', testBroadcast);
+        if (testWebSocketBtn)
+            testWebSocketBtn.addEventListener('click', testWebSocketUpgrade);
+        if (sendCustomBtn)
+            sendCustomBtn.addEventListener('click', sendCustomBroadcast);
+        if (clearLogBtn) clearLogBtn.addEventListener('click', clearLog);
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function () {
+        addMessage('Test page loaded successfully', 'success');
+        addMessage('All JavaScript functions are properly loaded', 'info');
+        setupEventListeners();
+        testConnection();
+    });
+
+    // If DOMContentLoaded already fired, run immediately
+    if (document.readyState !== 'loading') {
+        addMessage('Test page loaded successfully', 'success');
+        addMessage('All JavaScript functions are properly loaded', 'info');
+        setupEventListeners();
+        testConnection();
+    }
+</script>

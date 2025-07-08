@@ -1,0 +1,29 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "openpoll-do",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-05-22",
+	"migrations": [
+		{
+			"new_sqlite_classes": [
+				"PollHub"
+			],
+			"tag": "v1"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "PollHub",
+				"name": "POLL_HUB"
+			}
+		]
+	},
+	"observability": {
+		"enabled": true
+	}
+}

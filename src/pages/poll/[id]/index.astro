@@ -3,7 +3,6 @@ import { createCaller } from '../../../lib/trpc/routers/_app';
 import type { Poll, User } from '../../../models/types';
 import PollFormWrapper from '@/components/PollFormWrapper';
 import SiteLayout from '@/layouts/CardLayout.astro';
-import { redisClient } from '@/lib/redis';
 import { auth } from '@/lib/auth';
 
 const { id } = Astro.params;

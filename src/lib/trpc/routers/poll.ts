@@ -80,13 +80,14 @@ export const pollRouter = router({
         await tx.update(polls).set({
           votes: sql`${polls.votes} + 1`
         });
-
-        // trigger event emitter
-        // ctx.redis.publish(
-        //   `update:${input.shortId}`,
-        //   JSON.stringify({ update: true })
-        // );
       });
+
+      // Broadcast update to Durable Object
+      if (ctx.env?.POLL_HUB) {
+        const id = ctx.env.POLL_HUB.idFromName(input.shortId);
+        const pollHub = ctx.env.POLL_HUB.get(id);
+        await pollHub.fetch(new Request('https://dummy.com/broadcast'));
+      }
     }),
   selectCurrentPollOption: authenticatedProcedure
     .input(
@@ -115,10 +116,12 @@ export const pollRouter = router({
         })
         .where(eq(polls.id, poll.id));
 
-      // ctx.redis.publish(
-      //   `update:${input.shortId}`,
-      //   JSON.stringify({ update: true })
-      // );
+      // Broadcast update to Durable Object
+      if (ctx.env?.POLL_HUB) {
+        const id = ctx.env.POLL_HUB.idFromName(input.shortId);
+        const pollHub = ctx.env.POLL_HUB.get(id);
+        await pollHub.fetch(new Request('https://dummy.com/broadcast'));
+      }
     }),
 
   deletePollOption: authenticatedProcedure
@@ -142,10 +145,13 @@ export const pollRouter = router({
       }
 
       await db.delete(pollOptions).where(eq(pollOptions.id, input.optionId));
-      // ctx.redis.publish(
-      //   `update:${input.shortId}`,
-      //   JSON.stringify({ update: true })
-      // );
+
+      // Broadcast update to Durable Object
+      if (ctx.env?.POLL_HUB) {
+        const id = ctx.env.POLL_HUB.idFromName(input.shortId);
+        const pollHub = ctx.env.POLL_HUB.get(id);
+        await pollHub.fetch(new Request('https://dummy.com/broadcast'));
+      }
     }),
 
   editPollOption: authenticatedProcedure
@@ -175,9 +181,12 @@ export const pollRouter = router({
           option: input.optionText
         })
         .where(eq(pollOptions.id, input.optionId));
-      // ctx.redis.publish(
-      //   `update:${input.shortId}`,
-      //   JSON.stringify({ update: true })
-      // );
+
+      // Broadcast update to Durable Object
+      if (ctx.env?.POLL_HUB) {
+        const id = ctx.env.POLL_HUB.idFromName(input.shortId);
+        const pollHub = ctx.env.POLL_HUB.get(id);
+        await pollHub.fetch(new Request('https://dummy.com/broadcast'));
+      }
     })
 });

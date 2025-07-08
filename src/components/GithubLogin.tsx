@@ -2,6 +2,7 @@ import React from 'react';
 import { Github, LogOut, Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 
+
 export const GithubLogin = () => {
   const { data: session, isPending } = authClient.useSession();
 

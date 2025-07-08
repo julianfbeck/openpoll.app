@@ -1,6 +1,0 @@
-dbs:
-  - path: ./db.sqlite3
-    replicas:
-      - type: s3
-        endpoint: ${REPLICA_URL}
-        bucket: tiny-poll

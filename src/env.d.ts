@@ -2,14 +2,19 @@
 type Runtime = import('@astrojs/cloudflare').Runtime<Env>;
 
 type ENV = {
-  // replace `MY_KV` with your KV namespace
-  MY_KV: KVNamespace;
+  BETTER_AUTH_SECRET: string;
+  BETTER_AUTH_URL: string;
+  GITHUB_CLIENT_ID: string;
+  GITHUB_CLIENT_SECRET: string;
+  PUBLIC_TRPC_URL: string;
+  TURSO_URL: string;
+  TURSO_AUTH_TOKEN: string;
+  POLL_HUB: DurableObjectNamespace;
 };
 
 
 declare namespace App {
-  // Note: 'import {} from ""' syntax does not work in .d.ts files.
-  interface Locals {
+  interface Locals extends Runtime {
     user: import("better-auth").User | null;
     session: import("better-auth").Session | null;
   }
