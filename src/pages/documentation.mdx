@@ -86,7 +86,7 @@ A successful response returns HTTP status 200 along with the poll details in JSO
 - **429 Too Many Requests**: Returned if the request rate limit is exceeded. The rate limit is 10 requests per hour per API key.
 
 ### Rate Limiting
-Rate limiting is enforced using a Redis key based on the `Authorization` header. If the number of requests exceeds the limit within an hour, subsequent requests will receive a 429 status code. The limit resets after one hour.
+Rate limiting is handled by Cloudflare. If the number of requests exceeds the limit within an hour, subsequent requests will receive a 429 status code. The limit resets after one hour.
 
 ### Example
 ```bash

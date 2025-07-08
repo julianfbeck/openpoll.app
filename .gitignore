@@ -16,7 +16,6 @@ yarn-error.log*
 pnpm-debug.log*
 
 # binaries
-litestream
 
 # environment variables
 .env
@@ -28,6 +27,4 @@ litestream
 # Ignore .sqlite3 files
 *.sqlite3
 *.sqlite3-shm
-*.sqlite3-wal
-.db.sqlite3-litestream
-.devs.vars
+*.sqlite3-wal.devs.vars

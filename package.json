@@ -7,7 +7,6 @@
     "start": "astro dev",
     "build": "astro build",
     "build:check": "astro check && astro build",
-    "dev-replicate": "source .env && litestream replicate -config litestream.private.yml -exec 'astro dev'",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "astro build && wrangler pages deploy && wrangler pages deployment tail --project-name openpoll",
