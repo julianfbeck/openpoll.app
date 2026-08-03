@@ -9,6 +9,7 @@
     "check": "astro check",
     "build": "astro build",
     "build:check": "astro check && astro build",
+    "test": "vitest run",
     "preview": "astro preview",
     "astro": "astro",
     "db:generate": "drizzle-kit generate",
@@ -68,6 +69,7 @@
     "@types/better-sqlite3": "^7.6.12",
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "^0.14.1",
-    "tw-animate-css": "^1.3.0"
+    "tw-animate-css": "^1.3.0",
+    "vitest": "^3.2.7"
   }
 }

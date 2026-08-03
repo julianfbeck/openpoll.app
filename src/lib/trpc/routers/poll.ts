@@ -7,7 +7,13 @@ import {
 import { pollOptions, polls } from '@/models/schema';
 import { db } from '@/utils/db';
 import type { PollOptionCreate } from '@/models/types';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
+import { TRPCError } from '@trpc/server';
+
+const pollReferenceInput = z.object({
+  shortId: z.string().min(1),
+  optionId: z.number().int().positive()
+});
 
 export const pollRouter = router({
   create: authenticatedProcedure
@@ -55,31 +61,69 @@ export const pollRouter = router({
   vote: publicProcedure
     .input(
       z.object({
-        shortId: z.string(),
-        optionIds: z.array(z.number())
+        shortId: z.string().min(1),
+        optionIds: z.array(z.number().int().positive()).min(1)
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const uniqueOptionIds = [...new Set(input.optionIds)];
+
       await db.transaction(async (tx) => {
         const poll = await tx.query.polls.findFirst({
           where: eq(polls.shortId, input.shortId)
         });
+
         if (!poll) {
-          throw new Error('Poll not found');
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Abstimmung nicht gefunden.'
+          });
         }
 
-        for (const optionId of input.optionIds) {
-          await tx
-            .update(pollOptions)
-            .set({
-              votes: sql`${pollOptions.votes} + 1`
-            })
-            .where(eq(pollOptions.id, Number(optionId)));
+        if (poll.isLocked) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Diese Abstimmung ist geschlossen.'
+          });
         }
 
-        await tx.update(polls).set({
-          votes: sql`${polls.votes} + 1`
-        });
+        const validOptions = await tx
+          .select({ id: pollOptions.id })
+          .from(pollOptions)
+          .where(
+            and(
+              eq(pollOptions.pollId, poll.id),
+              inArray(pollOptions.id, uniqueOptionIds)
+            )
+          );
+
+        if (validOptions.length !== uniqueOptionIds.length) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Eine oder mehrere Antwortoptionen sind ungültig.'
+          });
+        }
+
+        await tx
+          .update(pollOptions)
+          .set({
+            votes: sql`${pollOptions.votes} + 1`
+          })
+          .where(
+            and(
+              eq(pollOptions.pollId, poll.id),
+              inArray(pollOptions.id, uniqueOptionIds)
+            )
+          );
+
+        // polls.votes counts submitted ballots, not selected options. A request
+        // with multiple valid options therefore increments this value once.
+        await tx
+          .update(polls)
+          .set({
+            votes: sql`${polls.votes} + 1`
+          })
+          .where(eq(polls.id, poll.id));
       });
 
       // Broadcast update to Durable Object
@@ -88,33 +132,52 @@ export const pollRouter = router({
         const pollHub = ctx.env.POLL_HUB.get(id);
         await pollHub.fetch(new Request('https://dummy.com/broadcast'));
       }
+
+      return { success: true };
     }),
   selectCurrentPollOption: authenticatedProcedure
-    .input(
-      z.object({
-        shortId: z.string(),
-        optionId: z.number()
-      })
-    )
+    .input(pollReferenceInput)
     .mutation(async ({ input, ctx }) => {
-      const poll = await db.query.polls.findFirst({
-        where: eq(polls.shortId, input.shortId)
+      await db.transaction(async (tx) => {
+        const poll = await tx.query.polls.findFirst({
+          where: eq(polls.shortId, input.shortId)
+        });
+
+        if (!poll) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Abstimmung nicht gefunden.'
+          });
+        }
+
+        if (poll.creatorId !== ctx.user.id) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Du bist nicht Eigentümer dieser Abstimmung.'
+          });
+        }
+
+        const option = await tx.query.pollOptions.findFirst({
+          where: and(
+            eq(pollOptions.id, input.optionId),
+            eq(pollOptions.pollId, poll.id)
+          )
+        });
+
+        if (!option) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Die Antwortoption gehört nicht zu dieser Abstimmung.'
+          });
+        }
+
+        await tx
+          .update(polls)
+          .set({
+            selectedPollOptionId: input.optionId
+          })
+          .where(eq(polls.id, poll.id));
       });
-
-      if (!poll) {
-        throw new Error('Poll not found');
-      }
-
-      if (poll.creatorId !== ctx.user.id) {
-        throw new Error('You are not the creator of this poll');
-      }
-
-      await db
-        .update(polls)
-        .set({
-          selectedPollOptionId: input.optionId
-        })
-        .where(eq(polls.id, poll.id));
 
       // Broadcast update to Durable Object
       if (ctx.env?.POLL_HUB) {
@@ -125,26 +188,44 @@ export const pollRouter = router({
     }),
 
   deletePollOption: authenticatedProcedure
-    .input(
-      z.object({
-        shortId: z.string(),
-        optionId: z.number()
-      })
-    )
+    .input(pollReferenceInput)
     .mutation(async ({ input, ctx }) => {
-      const poll = await db.query.polls.findFirst({
-        where: eq(polls.shortId, input.shortId)
+      await db.transaction(async (tx) => {
+        const poll = await tx.query.polls.findFirst({
+          where: eq(polls.shortId, input.shortId)
+        });
+
+        if (!poll) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Abstimmung nicht gefunden.'
+          });
+        }
+
+        if (poll.creatorId !== ctx.user.id) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Du bist nicht Eigentümer dieser Abstimmung.'
+          });
+        }
+
+        const deleted = await tx
+          .delete(pollOptions)
+          .where(
+            and(
+              eq(pollOptions.id, input.optionId),
+              eq(pollOptions.pollId, poll.id)
+            )
+          )
+          .returning({ id: pollOptions.id });
+
+        if (deleted.length !== 1) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Die Antwortoption gehört nicht zu dieser Abstimmung.'
+          });
+        }
       });
-
-      if (!poll) {
-        throw new Error('Poll not found');
-      }
-
-      if (poll.creatorId !== ctx.user.id) {
-        throw new Error('You are not the creator of this poll');
-      }
-
-      await db.delete(pollOptions).where(eq(pollOptions.id, input.optionId));
 
       // Broadcast update to Durable Object
       if (ctx.env?.POLL_HUB) {
@@ -157,30 +238,51 @@ export const pollRouter = router({
   editPollOption: authenticatedProcedure
     .input(
       z.object({
-        shortId: z.string(),
-        optionId: z.number(),
+        shortId: z.string().min(1),
+        optionId: z.number().int().positive(),
         optionText: z.string().min(1).max(200)
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const poll = await db.query.polls.findFirst({
-        where: eq(polls.shortId, input.shortId)
+      await db.transaction(async (tx) => {
+        const poll = await tx.query.polls.findFirst({
+          where: eq(polls.shortId, input.shortId)
+        });
+
+        if (!poll) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Abstimmung nicht gefunden.'
+          });
+        }
+
+        if (poll.creatorId !== ctx.user.id) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Du bist nicht Eigentümer dieser Abstimmung.'
+          });
+        }
+
+        const updated = await tx
+          .update(pollOptions)
+          .set({
+            option: input.optionText
+          })
+          .where(
+            and(
+              eq(pollOptions.id, input.optionId),
+              eq(pollOptions.pollId, poll.id)
+            )
+          )
+          .returning({ id: pollOptions.id });
+
+        if (updated.length !== 1) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Die Antwortoption gehört nicht zu dieser Abstimmung.'
+          });
+        }
       });
-
-      if (!poll) {
-        throw new Error('Poll not found');
-      }
-
-      if (poll.creatorId !== ctx.user.id) {
-        throw new Error('You are not the creator of this poll');
-      }
-
-      await db
-        .update(pollOptions)
-        .set({
-          option: input.optionText
-        })
-        .where(eq(pollOptions.id, input.optionId));
 
       // Broadcast update to Durable Object
       if (ctx.env?.POLL_HUB) {
