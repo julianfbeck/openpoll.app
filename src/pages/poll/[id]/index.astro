@@ -28,7 +28,7 @@ const user = session?.user;
   currentPage="poll"
   title={poll.event}
   titleStart="Poll"
-  ogPath={new URL(`/api/og/${poll.shortId}.png`, Astro.site).href}
+  ogPath={new URL(`/api/og/${poll.shortId}.png`, import.meta.env.BETTER_AUTH_URL || Astro.url.origin).href}
 >
   <PollFormWrapper client:load poll={poll} user={user as User} />
 </SiteLayout>

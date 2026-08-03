@@ -1,0 +1,32 @@
+services:
+  openpoll:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openpoll
+    restart: unless-stopped
+    ports:
+      - "4321:4321"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 4321
+      TURSO_URL: file:/data/openpoll.db
+      TURSO_AUTH_TOKEN: ""
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:4321}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env}
+      ALLOW_SIGNUP: ${ALLOW_SIGNUP:-false}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:4321/sign-in').then(response => { if (!response.ok) process.exit(1) }).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

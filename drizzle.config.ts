@@ -6,7 +6,7 @@ export default {
   out: './drizzle',
   dialect: 'turso',
   dbCredentials: {
-    url: process.env.TURSO_URL || "file:local.db",
+    url: process.env.TURSO_URL || 'file:/data/openpoll.db',
     authToken: process.env.TURSO_AUTH_TOKEN || undefined,
   },
   verbose: true

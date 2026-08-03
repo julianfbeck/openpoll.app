@@ -91,10 +91,13 @@ export const POST: APIRoute = async ({ request }) => {
         return new Response('Failed to fetch created poll', { status: 500 });
       }
 
+      const origin = new URL(
+        import.meta.env.BETTER_AUTH_URL || request.url
+      ).origin;
       const fullPollWithUrl = {
         ...fullPoll,
-        url: `https://openpoll.app/${fullPoll.shortId}`,
-        api_url: `https://openpoll.app/api/poll/${fullPoll.shortId}`
+        url: `${origin}/poll/${fullPoll.shortId}`,
+        api_url: `${origin}/api/poll/${fullPoll.shortId}`
       };
 
       return new Response(JSON.stringify(fullPollWithUrl), {

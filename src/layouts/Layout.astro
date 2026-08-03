@@ -1,5 +1,4 @@
 ---
-import { Plausible } from 'astro-analytics';
 import '@/styles/global.css';
 interface Props {
   title: string;
@@ -7,13 +6,16 @@ interface Props {
   canonicalURL?: string;
 }
 
+const publicOrigin = new URL(
+  import.meta.env.BETTER_AUTH_URL || Astro.url.origin
+).origin;
 const {
   title,
   ogPath,
-  canonicalURL = new URL(Astro.url.pathname, Astro.site).href
+  canonicalURL = new URL(Astro.url.pathname, publicOrigin).href
 } = Astro.props;
 
-const socialImageURL = ogPath ?? new URL('/og-image.jpg', Astro.site).href;
+const socialImageURL = ogPath ?? new URL('/og-image.jpg', publicOrigin).href;
 ---
 
 <!doctype html>
@@ -57,12 +59,6 @@ const socialImageURL = ogPath ?? new URL('/og-image.jpg', Astro.site).href;
     meeting."
     />
     <meta property="twitter:image" content={socialImageURL} />
-
-    <!-- Analytics -->
-    <Plausible
-      domain="openpoll.app"
-      src="https://plausible.home.juli.sh/js/script.js"
-    />
 
     <title>{title}</title>
     <!-- <ViewTransitions /> -->

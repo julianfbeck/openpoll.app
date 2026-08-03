@@ -1,27 +1,26 @@
 import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
-import cloudflare from '@astrojs/cloudflare';
+import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 
 
 // https://astro.build/config
 export default defineConfig({
-  // site: 'https://openpoll.app',
-  site: 'https://openpoll.app',
   output: 'server',
   integrations: [react(), mdx()],
-  adapter: cloudflare({
-    platformProxy: true
+  adapter: node({
+    mode: 'standalone'
   }),
   env: {
     schema: {
-      BETTER_AUTH_URL: envField.string({ context: "server", access: "secret" }),
-      TURSO_URL: envField.string({ context: "server", access: "secret" }),
-      TURSO_AUTH_TOKEN: envField.string({ context: "server", access: "secret" }), 
-      GITHUB_CLIENT_ID: envField.string({ context: "server", access: "secret" }),
-      GITHUB_CLIENT_SECRET: envField.string({ context: "server", access: "secret" }),
-      PUBLIC_TRPC_URL: envField.string({ context: "server", access: "secret" }),
+      BETTER_AUTH_URL: envField.string({ context: 'server', access: 'secret', default: 'http://localhost:4321' }),
+      BETTER_AUTH_SECRET: envField.string({ context: 'server', access: 'secret' }),
+      ALLOW_SIGNUP: envField.boolean({ context: 'server', access: 'secret', default: false }),
+      TURSO_URL: envField.string({ context: 'server', access: 'secret', default: 'file:/data/openpoll.db' }),
+      TURSO_AUTH_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+      GITHUB_CLIENT_ID: envField.string({ context: 'server', access: 'secret', optional: true }),
+      GITHUB_CLIENT_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
     }
   },
   markdown: {

@@ -7,7 +7,7 @@ import { QueryClient } from '@tanstack/react-query';
 const trpcAstro = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: 'http://localhost:4747/api/trpc'
+      url: '/api/trpc'
     })
   ]
 });

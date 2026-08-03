@@ -1,7 +1,8 @@
 ---
 import SiteLayout from '@/layouts/CardLayout.astro';
 import SettingsFormWrapper from '@/components/SettingsFormWrapper';
-if (!Astro.locals.session) return Astro.redirect('/api/auth/signin');
+import { getSignInURL } from '@/lib/auth-redirect';
+if (!Astro.locals.session) return Astro.redirect(getSignInURL(Astro.url));
 ---
 
 <SiteLayout currentPage="settings" title="Your Settings" hideCard>

@@ -1,5 +1,4 @@
-import React from 'react';
-import { Github, LogOut, Loader2 } from 'lucide-react';
+import { LogIn, LogOut, Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 
 
@@ -26,13 +25,13 @@ export const GithubLogin = () => {
           </button>
         </div>
       ) : (
-        <button
-          onClick={() => authClient.signIn.social({ provider: 'github' })}
+        <a
+          href="/sign-in"
           className="flex items-center w-full p-2 text-sm text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group transition"
         >
-          <Github className="w-4 h-4 mr-2 text-blue-500" />
-          Sign in with GitHub
-        </button>
+          <LogIn className="w-4 h-4 mr-2 text-blue-500" />
+          Sign in
+        </a>
       )}
     </div>
   );

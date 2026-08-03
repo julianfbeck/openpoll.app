@@ -86,7 +86,7 @@ export default function OpenGraph({ data }: { data: Poll }) {
             fontFamily: 'Roboto'
           }}
         >
-          openpoll.app
+          OpenPoll
         </div>
       </div>
     </div>

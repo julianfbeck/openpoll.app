@@ -76,8 +76,8 @@ A successful response returns HTTP status 200 along with the poll details in JSO
     },
     // Additional options omitted 
   ],
-  "url": "https://openpoll.app/PK_IOGjY5i", // Used to access the poll on the web
-  "api_url": "https://openpoll.app/api/poll/PK_IOGjY5i" // Used to interact with the poll via the API
+  "url": "https://poll.example.ch/poll/PK_IOGjY5i", // Used to access the poll on the web
+  "api_url": "https://poll.example.ch/api/poll/PK_IOGjY5i" // Used to interact with the poll via the API
 }
 ```
 
@@ -109,7 +109,7 @@ curl -X POST \
       "Rust"
     ]
   }' \
-  https://openpoll.app/api/poll/create
+  https://poll.example.ch/api/poll/create
 ```
 
 ---
@@ -158,8 +158,8 @@ A successful response returns HTTP status 200 along with the poll details in JSO
     },
     // Additional options omitted for brevity
   ],
-  "url": "https://openpoll.app/PK_IOGjY5i",
-  "api_url": "https://openpoll.app/api/poll/PK_IOGjY5i"
+  "url": "https://poll.example.ch/poll/PK_IOGjY5i",
+  "api_url": "https://poll.example.ch/api/poll/PK_IOGjY5i"
 }
 ```
 
@@ -172,5 +172,5 @@ A successful response returns HTTP status 200 along with the poll details in JSO
 ```bash
 curl -X GET \
   -H "Authorization: Bearer YOUR_API_KEY_HERE" \
-  https://openpoll.app/api/poll/{pollId}
+  https://poll.example.ch/api/poll/{pollId}
 ```

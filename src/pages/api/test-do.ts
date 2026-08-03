@@ -92,7 +92,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
 	try {
-		const body = await request.json();
+		const body = await request.json() as { pollId?: string; message?: unknown };
 		const { pollId = 'test-poll-123', message } = body;
 
 		const env = locals.runtime?.env;
@@ -140,4 +140,4 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			headers: { 'Content-Type': 'application/json' }
 		});
 	}
-}; 
+};

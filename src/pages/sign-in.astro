@@ -1,0 +1,33 @@
+---
+import AuthForm from '@/components/AuthForm';
+import FullPageLayout from '@/layouts/FullPageLayout.astro';
+import { getSafeCallbackURL } from '@/lib/auth-redirect';
+
+const callbackURL = getSafeCallbackURL(Astro.url.searchParams.get('callbackURL'));
+const allowSignUp = process.env.ALLOW_SIGNUP === 'true';
+const githubEnabled = Boolean(
+  process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+);
+
+if (Astro.locals.user) {
+  return Astro.redirect(callbackURL);
+}
+---
+
+<FullPageLayout currentPage="sign-in" title="Sign in to OpenPoll">
+  <section class="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 py-12">
+    <div class="w-full max-w-md">
+      <div class="mb-8 text-center">
+        <h1 class="mb-3 text-4xl font-bold text-gray-900">Sign in to OpenPoll</h1>
+        <p class="text-gray-600">Sign in to create and manage your polls.</p>
+      </div>
+      <AuthForm
+        client:load
+        mode="sign-in"
+        callbackURL={callbackURL}
+        allowSignUp={allowSignUp}
+        githubEnabled={githubEnabled}
+      />
+    </div>
+  </section>
+</FullPageLayout>

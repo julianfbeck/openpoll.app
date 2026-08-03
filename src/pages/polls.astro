@@ -6,12 +6,13 @@ import { polls } from '@/models/schema';
 import { PollsTable } from '../components/Polls';
 import SiteLayout from '@/layouts/CardLayout.astro';
 import type { User } from 'better-auth/types';
+import { getSignInURL } from '@/lib/auth-redirect';
 
 const session = await auth.api.getSession({
   headers: Astro.request.headers
 });
 
-if (!session?.user) return Astro.redirect('/api/auth/signin');
+if (!session?.user) return Astro.redirect(getSignInURL(Astro.url));
 const user = session.user as User;
 
 const userPolls = await db.query.polls.findMany({

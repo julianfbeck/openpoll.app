@@ -25,7 +25,7 @@ const poll = (await caller.poll.get(id)) as Poll;
   currentPage="poll"
   title={poll.event}
   titleStart="Poll"
-  ogPath={new URL(`/api/og/${poll.shortId}.png`, Astro.site).href}
+  ogPath={new URL(`/api/og/${poll.shortId}.png`, import.meta.env.BETTER_AUTH_URL || Astro.url.origin).href}
 >
   <VoteFormWrapper client:load poll={poll} />
 </SiteLayout>

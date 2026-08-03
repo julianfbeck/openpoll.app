@@ -3,9 +3,19 @@ import { db } from '@/utils/db';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 
+const baseURL = process.env.BETTER_AUTH_URL || 'http://localhost:4321';
+const baseOrigin = new URL(baseURL).origin;
+const githubClientId = process.env.GITHUB_CLIENT_ID;
+const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+
 export const auth = betterAuth({
-  // HERE I NEED TO UPDATE HTE LOCAL DEVELOPMENT _ CURRENTLS ITS BUGGY 
-  baseURL: "https://openpoll.app/",
+  baseURL: baseOrigin,
+  secret: process.env.BETTER_AUTH_SECRET,
+  trustedOrigins: [baseOrigin],
+  emailAndPassword: {
+    enabled: true,
+    disableSignUp: process.env.ALLOW_SIGNUP !== 'true'
+  },
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema: {
@@ -15,11 +25,16 @@ export const auth = betterAuth({
       verification
     }
   }),
-  socialProviders: {
-    github: {
-      clientId: import.meta.env.GITHUB_CLIENT_ID!,
-      clientSecret: import.meta.env.GITHUB_CLIENT_SECRET!
-    }
+  socialProviders: githubClientId && githubClientSecret
+    ? {
+        github: {
+          clientId: githubClientId,
+          clientSecret: githubClientSecret
+        }
+      }
+    : {},
+  advanced: {
+    useSecureCookies: new URL(baseOrigin).protocol === 'https:'
   },
   plugins: [],
 });
